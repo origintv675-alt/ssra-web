@@ -22,7 +22,9 @@ const EFFECTS: EffectName[] = [
   "starburst",
 ];
 
-type Visitor = { session_id: string; label: string; kind: string; path: string; last_seen_at: string };
+type Visitor = { session_id: string; label: string; kind: string; path: string; last_seen_at: string; ip?: string | null; user_id?: string | null; guest_id?: string | null };
+type Haunt = { id: string; stage: string; origin_path: string | null; target_ip: string | null; created_at: string };
+
 type Guest = { id: string; name: string; space_tokens: number; banned: boolean; badge: string | null };
 type Promo = { code: string; tokens: number; grants_pro: boolean; lifetime: boolean; badge: string | null };
 type EventRow = { id: string; title: string; starts_at: string | null; redirect_url: string | null };
