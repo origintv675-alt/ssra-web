@@ -182,11 +182,11 @@ export function TormentorLayer() {
   if (phase === "idle") return null;
 
   return (
-    <div className="tormentor-stage" aria-hidden>
+    <div className={`tormentor-stage${phase === "run" ? " is-chase" : ""}`} aria-hidden>
       {phase !== "offline" && (
         <>
           <div className="tormentor-dark" />
-          <div className="tormentor-run">
+          <div className={phase === "run" ? "tormentor-run is-chase" : "tormentor-run"}>
             <p className="tormentor-run-word">RUN</p>
             <p className="tormentor-run-distance">{distance} m</p>
             <p className="tormentor-run-label">it is closing in</p>
