@@ -73,6 +73,11 @@ export function TormentorLayer() {
   const [phase, setPhase] = useState<Phase>("idle");
   const [distance, setDistance] = useState(500);
   const playing = useRef(false);
+  const timers = useRef<number[]>([]);
+
+  // Timers live in a ref so the poll advancing the stage mid-sequence can never
+  // cancel the chase half way through.
+  useEffect(() => () => timers.current.forEach((t) => window.clearTimeout(t)), []);
 
   useEffect(() => {
     if (!haunt) return;
@@ -89,9 +94,10 @@ export function TormentorLayer() {
     const ticker = window.setInterval(() => {
       const left = Math.max(0, 500 - Math.round((Date.now() - startedAt) / (RUN_MS / 500)));
       setDistance(left);
+      if (left <= 0) window.clearInterval(ticker);
     }, 60);
 
-    const timers = [
+    timers.current.push(
       window.setTimeout(() => setPhase("hand"), HAND_MS),
       window.setTimeout(() => setPhase("face"), FACE_MS),
       window.setTimeout(() => {
@@ -103,13 +109,9 @@ export function TormentorLayer() {
           .catch(() => {})
           .finally(() => window.location.reload());
       }, RELOAD_MS),
-    ];
-
-    return () => {
-      window.clearInterval(ticker);
-      timers.forEach((t) => window.clearTimeout(t));
-    };
+    );
   }, [haunt?.id, stage]);
+
 
   if (stage === "banned") {
     return (
