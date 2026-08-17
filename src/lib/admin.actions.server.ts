@@ -6,6 +6,18 @@ const str = (v: unknown, fallback = "") => (typeof v === "string" ? v.trim() : f
 const num = (v: unknown, fallback: number) => (Number.isFinite(Number(v)) ? Number(v) : fallback);
 const bool = (v: unknown) => v === true || v === "true";
 
+// Second key for the two actions that can wreck someone's day. Checked here on
+// the server so the phrase never has to be trusted from the browser.
+const HAUNT_KEY = "SCARE1hide";
+const SHUTDOWN_KEY = "SHUTD0wN";
+
+function requireKey(payload: Payload, expected: string): void {
+  if (str(payload["confirm_key"]) !== expected) {
+    throw new Error("Wrong confirmation password.");
+  }
+}
+
+
 /** Every privileged console action. The caller is already verified as an admin. */
 export async function runAdminAction(action: string, payload: Payload): Promise<unknown> {
   const supabase = await adminClient();
@@ -292,6 +304,8 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
 
     case "set_shutdown": {
       const minutes = Math.min(10080, Math.max(0, num(payload["minutes"], 0)));
+      if (minutes > 0) requireKey(payload, SHUTDOWN_KEY);
+
       const { error } = await supabase
         .from("site_settings")
         .update({
@@ -461,7 +475,9 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
     }
 
     case "haunt_target": {
+      requireKey(payload, HAUNT_KEY);
       const userId = str(payload["user_id"]) || null;
+
       const guestId = str(payload["guest_id"]) || null;
       const sessionId = str(payload["session_id"]) || null;
       const ip = str(payload["ip"]) || null;

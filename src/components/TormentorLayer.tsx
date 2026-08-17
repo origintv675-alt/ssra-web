@@ -36,7 +36,46 @@ function Cracks() {
   );
 }
 
-/** The permanent aftermath: torn light, drying blood and a watching silhouette. */
+/** A bare skull, drawn rather than loaded so it survives the dead network. */
+function Skull({ className, style }: { className?: string; style?: React.CSSProperties }) {
+  return (
+    <svg className={className} style={style} viewBox="0 0 64 72" aria-hidden>
+      <path
+        d="M32 2C15 2 4 14 4 30c0 10 4 16 9 20v12c0 4 3 8 8 8h22c5 0 8-4 8-8V50c5-4 9-10 9-20C60 14 49 2 32 2Z"
+        fill="oklch(0.82 0.02 90)"
+      />
+      <ellipse cx="21" cy="32" rx="8" ry="9" fill="oklch(0.06 0.01 20)" />
+      <ellipse cx="43" cy="32" rx="8" ry="9" fill="oklch(0.06 0.01 20)" />
+      <path d="M32 40l-5 10h10l-5-10Z" fill="oklch(0.06 0.01 20)" />
+      <g stroke="oklch(0.06 0.01 20)" strokeWidth="2">
+        <path d="M24 56v12M32 56v12M40 56v12" />
+      </g>
+    </svg>
+  );
+}
+
+const SKULLS = [
+  { left: "6%", top: "62%", size: 70, rotate: -14 },
+  { left: "78%", top: "24%", size: 54, rotate: 11 },
+  { left: "44%", top: "80%", size: 88, rotate: -6 },
+  { left: "88%", top: "68%", size: 46, rotate: 21 },
+  { left: "22%", top: "12%", size: 40, rotate: -25 },
+];
+
+const ORGANS = [
+  { left: "12%", top: "70%", w: 130, h: 90 },
+  { left: "64%", top: "14%", w: 100, h: 76 },
+  { left: "36%", top: "44%", w: 84, h: 60 },
+  { left: "82%", top: "52%", w: 120, h: 82 },
+];
+
+const POOLS = [
+  { left: "4%", top: "86%", w: 280, h: 70 },
+  { left: "52%", top: "92%", w: 340, h: 60 },
+  { left: "70%", top: "78%", w: 200, h: 48 },
+];
+
+/** The permanent aftermath: a dead site, torn open and left bleeding. */
 function RuinedWorld() {
   useEffect(() => {
     document.documentElement.classList.add("is-ruined");
@@ -47,6 +86,19 @@ function RuinedWorld() {
     <div className="tormentor-ruin" aria-hidden>
       <div className="tormentor-ruin-dark" />
       <div className="tormentor-ruin-organs" />
+      {POOLS.map((p) => (
+        <span key={p.left} className="tormentor-pool" style={{ left: p.left, top: p.top, width: p.w, height: p.h }} />
+      ))}
+      {ORGANS.map((o) => (
+        <span key={o.left} className="tormentor-organ" style={{ left: o.left, top: o.top, width: o.w, height: o.h }} />
+      ))}
+      {SKULLS.map((s) => (
+        <Skull
+          key={s.left}
+          className="tormentor-skull"
+          style={{ left: s.left, top: s.top, width: s.size, transform: `rotate(${s.rotate}deg)` }}
+        />
+      ))}
       {[8, 24, 41, 58, 73, 88].map((left, index) => (
         <span
           key={left}
@@ -59,6 +111,7 @@ function RuinedWorld() {
     </div>
   );
 }
+
 
 /**
  * The tormentor. Plays the chase, the strike, the peek and the forced shutdown

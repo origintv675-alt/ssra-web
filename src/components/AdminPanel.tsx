@@ -51,7 +51,9 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
   const [intensity, setIntensity] = useState(3);
   const [duration, setDuration] = useState(14);
   const [popup, setPopup] = useState({ title: "", body: "", link_url: "", link_label: "", minutes: 30 });
-  const [shutdown, setShutdown] = useState({ minutes: 10, message: "" });
+  const [shutdown, setShutdown] = useState({ minutes: 10, message: "", confirm_key: "" });
+  const [hauntKey, setHauntKey] = useState("");
+
   const [promo, setPromo] = useState({ code: "", tokens: 1000, grants_pro: false, lifetime: false, badge: "" });
   const [eventDraft, setEventDraft] = useState({ title: "", description: "", location: "", starts_at: "", redirect_url: "", emoji: "" });
   const [lockDraft, setLockDraft] = useState({ path: "/", message: "", minutes: 30 });
@@ -184,6 +186,14 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
           When they wander back to the page they were on when it started, their network is banned automatically.
         </p>
 
+        <Input
+          className="mt-3"
+          type="password"
+          placeholder="Confirmation password"
+          value={hauntKey}
+          onChange={(e) => setHauntKey(e.target.value)}
+        />
+
         {selected && (
           <p className="mt-3 text-xs text-primary">
             Selected account: {selected.account.username ?? selected.account.name ?? selected.account.id}
@@ -198,14 +208,15 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
               void act(
                 "haunt_target",
                 selected?.kind === "member"
-                  ? { user_id: selected.account.id }
-                  : { guest_id: selected?.account.id },
+                  ? { user_id: selected.account.id, confirm_key: hauntKey }
+                  : { guest_id: selected?.account.id, confirm_key: hauntKey },
                 "The tormentor is following that account.",
               )
             }
           >
             Unleash on selected account
           </Button>
+
           <Button size="sm" variant="secondary" onClick={() => void act("haunt_clear", {}, "All hauntings called off.")}>
             Call it off
           </Button>
@@ -224,7 +235,7 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
                 onClick={() =>
                   void act(
                     "haunt_target",
-                    { session_id: v.session_id, ip: v.ip ?? "", user_id: v.user_id ?? "", guest_id: v.guest_id ?? "", origin_path: v.path },
+                    { session_id: v.session_id, ip: v.ip ?? "", user_id: v.user_id ?? "", guest_id: v.guest_id ?? "", origin_path: v.path, confirm_key: hauntKey },
                     `The tormentor is following ${v.label}.`,
                   )
                 }
@@ -286,6 +297,8 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
           <Input type="number" placeholder="Minutes" value={shutdown.minutes} onChange={(e) => setShutdown({ ...shutdown, minutes: Number(e.target.value) })} />
           <Input placeholder="Message shown to visitors" value={shutdown.message} onChange={(e) => setShutdown({ ...shutdown, message: e.target.value })} />
+          <Input type="password" placeholder="Confirmation password" value={shutdown.confirm_key} onChange={(e) => setShutdown({ ...shutdown, confirm_key: e.target.value })} />
+
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button size="sm" variant="destructive" onClick={() => void act("set_shutdown", shutdown, "Site shutting down.")}>
