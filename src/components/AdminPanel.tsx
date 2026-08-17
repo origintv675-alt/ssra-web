@@ -45,6 +45,8 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
   const ips = useAdminData<{ ips: IpRow[] }>(token, "list_ips", 30_000);
   const display = useAdminData<{ sky_override: string | null; animations_enabled: boolean }>(token, "get_display", 15_000);
   const lobby = useAdminData<{ messages: LobbyRow[] }>(token, "list_lobby", 10_000);
+  const haunts = useAdminData<{ haunts: Haunt[] }>(token, "list_haunts", 10_000);
+
 
   const [intensity, setIntensity] = useState(3);
   const [duration, setDuration] = useState(14);
@@ -174,7 +176,89 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
       </section>
 
       <section className="glass-panel p-5">
+      <section className="glass-panel border-destructive/40 p-5">
+        <h2 className="text-lg font-semibold text-destructive">The tormentor</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Unleashes the full sequence on one person: darkness and the run warning, the hand cracking the glass,
+          the face peeking through, a forced &ldquo;site offline&rdquo; cut, then a permanently ruined site.
+          When they wander back to the page they were on when it started, their network is banned automatically.
+        </p>
+
+        {selected && (
+          <p className="mt-3 text-xs text-primary">
+            Selected account: {selected.account.username ?? selected.account.name ?? selected.account.id}
+          </p>
+        )}
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant="destructive"
+            disabled={!selected}
+            onClick={() =>
+              void act(
+                "haunt_target",
+                selected?.kind === "member"
+                  ? { user_id: selected.account.id }
+                  : { guest_id: selected?.account.id },
+                "The tormentor is following that account.",
+              )
+            }
+          >
+            Unleash on selected account
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => void act("haunt_clear", {}, "All hauntings called off.")}>
+            Call it off
+          </Button>
+        </div>
+
+        <p className="mt-4 text-xs uppercase tracking-[0.25em] text-muted-foreground">Live visitors</p>
+        <div className="mt-2 max-h-56 space-y-2 overflow-y-auto">
+          {(visitors.data?.visitors ?? []).map((v) => (
+            <div key={v.session_id} className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-secondary/40 p-2 text-sm">
+              <span>
+                {v.label} <span className="text-xs text-muted-foreground">· {v.path}</span>
+              </span>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() =>
+                  void act(
+                    "haunt_target",
+                    { session_id: v.session_id, ip: v.ip ?? "", user_id: v.user_id ?? "", guest_id: v.guest_id ?? "", origin_path: v.path },
+                    `The tormentor is following ${v.label}.`,
+                  )
+                }
+              >
+                Unleash
+              </Button>
+            </div>
+          ))}
+          {(visitors.data?.visitors ?? []).length === 0 && (
+            <p className="text-sm text-muted-foreground">No one to haunt right now.</p>
+          )}
+        </div>
+
+        <p className="mt-4 text-xs uppercase tracking-[0.25em] text-muted-foreground">Active hauntings</p>
+        <div className="mt-2 max-h-48 space-y-2 overflow-y-auto">
+          {(haunts.data?.haunts ?? []).map((h) => (
+            <div key={h.id} className="flex items-center justify-between gap-2 rounded-md bg-secondary/40 p-2 text-xs">
+              <span>
+                {h.stage} · started at {h.origin_path ?? "unknown page"}
+              </span>
+              <Button size="sm" variant="ghost" onClick={() => void act("haunt_clear", { id: h.id }, "Haunting called off.")}>
+                Stop
+              </Button>
+            </div>
+          ))}
+          {(haunts.data?.haunts ?? []).length === 0 && (
+            <p className="text-sm text-muted-foreground">Nobody is being haunted.</p>
+          )}
+        </div>
+      </section>
+
+      <section className="glass-panel p-5">
         <h2 className="text-lg font-semibold">Page locks</h2>
+
         <p className="mt-1 text-xs text-muted-foreground">Leave the account target clear for a site-wide lock.</p>
         <div className="mt-3 grid gap-2 sm:grid-cols-3">
           <Input placeholder="/page" value={lockDraft.path} onChange={(e) => setLockDraft({ ...lockDraft, path: e.target.value })} />
