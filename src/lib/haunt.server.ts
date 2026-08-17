@@ -55,7 +55,10 @@ export async function hauntFor(who: Who): Promise<HauntState | null> {
     if (row.target_user_id && who.userId && row.target_user_id === who.userId) return true;
     if (row.target_guest_id && who.guestId && row.target_guest_id === who.guestId) return true;
     if (row.target_session_id && who.sessionId && row.target_session_id === who.sessionId) return true;
-    if (row.target_ip && who.ip && row.target_ip === who.ip) return true;
+    // IP is shared by everyone behind the same proxy, so it only counts when the
+    // haunt has no more precise target.
+    const ipOnly = !row.target_user_id && !row.target_guest_id && !row.target_session_id;
+    if (ipOnly && row.target_ip && who.ip && row.target_ip === who.ip) return true;
     return false;
   });
 

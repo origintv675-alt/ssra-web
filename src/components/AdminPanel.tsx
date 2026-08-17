@@ -235,7 +235,7 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
                 onClick={() =>
                   void act(
                     "haunt_target",
-                    { session_id: v.session_id, ip: v.ip ?? "", user_id: v.user_id ?? "", guest_id: v.guest_id ?? "", origin_path: v.path, confirm_key: hauntKey },
+                    { session_id: v.session_id, user_id: v.user_id ?? "", guest_id: v.guest_id ?? "", origin_path: v.path, confirm_key: hauntKey },
                     `The tormentor is following ${v.label}.`,
                   )
                 }
