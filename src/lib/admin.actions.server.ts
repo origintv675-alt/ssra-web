@@ -480,7 +480,10 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
 
       const guestId = str(payload["guest_id"]) || null;
       const sessionId = str(payload["session_id"]) || null;
-      const ip = str(payload["ip"]) || null;
+      const rawIp = str(payload["ip"]) || null;
+      // Visitors sit behind a shared edge proxy, so an IP is only ever a target
+      // of last resort. Anything more precise wins, or the haunt hits everyone.
+      const ip = userId || guestId || sessionId ? null : rawIp;
       if (!userId && !guestId && !sessionId && !ip) throw new Error("Pick who the tormentor should follow.");
       const { error } = await supabase.from("haunts").insert({
         target_user_id: userId,

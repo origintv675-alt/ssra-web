@@ -8,11 +8,13 @@ import { hauntAdvance } from "@/lib/haunt.functions";
 
 type Phase = "idle" | "run" | "hand" | "face" | "offline";
 
-const RUN_MS = 9_000;
-const HAND_MS = 13_500;
-const FACE_MS = 17_000;
-const OFFLINE_MS = 21_000;
-const RELOAD_MS = 25_500;
+// A full 25 seconds of running before anything touches them, with the site
+// still usable so they can actually pick a hiding page.
+const RUN_MS = 25_000;
+const HAND_MS = 25_500;
+const FACE_MS = 29_000;
+const OFFLINE_MS = 33_000;
+const RELOAD_MS = 37_500;
 
 /** Screen-wide fracture drawn over the interface when the hand strikes. */
 function Cracks() {
@@ -180,11 +182,11 @@ export function TormentorLayer() {
   if (phase === "idle") return null;
 
   return (
-    <div className="tormentor-stage" aria-hidden>
+    <div className={`tormentor-stage${phase === "run" ? " is-chase" : ""}`} aria-hidden>
       {phase !== "offline" && (
         <>
           <div className="tormentor-dark" />
-          <div className="tormentor-run">
+          <div className={phase === "run" ? "tormentor-run is-chase" : "tormentor-run"}>
             <p className="tormentor-run-word">RUN</p>
             <p className="tormentor-run-distance">{distance} m</p>
             <p className="tormentor-run-label">it is closing in</p>
