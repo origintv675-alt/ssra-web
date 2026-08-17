@@ -51,7 +51,9 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
   const [intensity, setIntensity] = useState(3);
   const [duration, setDuration] = useState(14);
   const [popup, setPopup] = useState({ title: "", body: "", link_url: "", link_label: "", minutes: 30 });
-  const [shutdown, setShutdown] = useState({ minutes: 10, message: "" });
+  const [shutdown, setShutdown] = useState({ minutes: 10, message: "", confirm_key: "" });
+  const [hauntKey, setHauntKey] = useState("");
+
   const [promo, setPromo] = useState({ code: "", tokens: 1000, grants_pro: false, lifetime: false, badge: "" });
   const [eventDraft, setEventDraft] = useState({ title: "", description: "", location: "", starts_at: "", redirect_url: "", emoji: "" });
   const [lockDraft, setLockDraft] = useState({ path: "/", message: "", minutes: 30 });
