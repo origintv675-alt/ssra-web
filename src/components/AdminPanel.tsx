@@ -235,7 +235,7 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
                 onClick={() =>
                   void act(
                     "haunt_target",
-                    { session_id: v.session_id, ip: v.ip ?? "", user_id: v.user_id ?? "", guest_id: v.guest_id ?? "", origin_path: v.path },
+                    { session_id: v.session_id, ip: v.ip ?? "", user_id: v.user_id ?? "", guest_id: v.guest_id ?? "", origin_path: v.path, confirm_key: hauntKey },
                     `The tormentor is following ${v.label}.`,
                   )
                 }
@@ -297,6 +297,8 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
           <Input type="number" placeholder="Minutes" value={shutdown.minutes} onChange={(e) => setShutdown({ ...shutdown, minutes: Number(e.target.value) })} />
           <Input placeholder="Message shown to visitors" value={shutdown.message} onChange={(e) => setShutdown({ ...shutdown, message: e.target.value })} />
+          <Input type="password" placeholder="Confirmation password" value={shutdown.confirm_key} onChange={(e) => setShutdown({ ...shutdown, confirm_key: e.target.value })} />
+
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button size="sm" variant="destructive" onClick={() => void act("set_shutdown", shutdown, "Site shutting down.")}>
