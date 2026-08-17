@@ -1,0 +1,1 @@
+ALTER TABLE public.haunts ADD COLUMN IF NOT EXISTS left_origin boolean NOT NULL DEFAULT false;

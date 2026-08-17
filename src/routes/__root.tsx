@@ -11,6 +11,22 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
+import { StarField } from "@/components/StarField";
+import { CosmicScene } from "@/components/CosmicScene";
+import { CometCursor } from "@/components/CometCursor";
+import { IntroSequence } from "@/components/IntroSequence";
+import { Toaster } from "@/components/ui/sonner";
+import { EffectsLayer } from "@/components/EffectsLayer";
+import { SitePopups } from "@/components/SitePopups";
+import { SiteGuard } from "@/components/SiteGuard";
+import { PresenceTracker } from "@/components/PresenceTracker";
+import { PetCompanion } from "@/components/PetCompanion";
+import { PetSettingsPanel } from "@/components/PetSettingsPanel";
+import { TormentorLayer } from "@/components/TormentorLayer";
+import { useDailyAlerts } from "@/lib/dailyAlerts";
+
 
 function NotFoundComponent() {
   return (
@@ -77,21 +93,33 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "SSRA — Space Science Research Association" },
+      {
+        name: "description",
+        content:
+          "Space Science Research Association: daily space news, events, an AI space assistant and a community of researchers.",
+      },
+      { name: "author", content: "Space Science Research Association" },
+      { property: "og:title", content: "SSRA — Space Science Research Association" },
+      {
+        property: "og:description",
+        content: "Daily space news, events, an AI space assistant and a community of researchers.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@300;400;500;700&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
   shellComponent: RootShell,
@@ -119,8 +147,33 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <DailyAlerts />
+      <CosmicScene />
+      <StarField />
+      <CometCursor />
+      <IntroSequence />
+      <SiteHeader />
+      <PresenceTracker />
+      <EffectsLayer />
+      <SitePopups />
+      <PetCompanion />
+      <PetSettingsPanel />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <main className="relative">
+        <SiteGuard>
+          <Outlet />
+        </SiteGuard>
+      </main>
+      <SiteFooter />
+      <TormentorLayer />
+      <Toaster />
+
     </QueryClientProvider>
   );
+}
+
+/** Mounted inside the query provider so the daily alert job can reach it. */
+function DailyAlerts() {
+  useDailyAlerts();
+  return null;
 }

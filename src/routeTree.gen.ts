@@ -10,33 +10,511 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AssistantRouteImport } from './routes/assistant'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CalendarRouteImport } from './routes/calendar'
+import { Route as CodexRouteImport } from './routes/codex'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CookiesRouteImport } from './routes/cookies'
+import { Route as DonateRouteImport } from './routes/donate'
+import { Route as EventsRouteImport } from './routes/events'
+import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as GamesRouteImport } from './routes/games'
+import { Route as ImagineRouteImport } from './routes/imagine'
+import { Route as LobbyRouteImport } from './routes/lobby'
+import { Route as NewsRouteImport } from './routes/news'
+import { Route as ObjectsRouteImport } from './routes/objects'
+import { Route as PetsRouteImport } from './routes/pets'
+import { Route as ProRouteImport } from './routes/pro'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SecurityRouteImport } from './routes/security'
+import { Route as ServicesRouteImport } from './routes/services'
+import { Route as SkyEventsRouteImport } from './routes/sky-events'
+import { Route as SkymapRouteImport } from './routes/skymap'
+import { Route as SolarSystemRouteImport } from './routes/solar-system'
+import { Route as SupportUsRouteImport } from './routes/support-us'
+import { Route as TokensRouteImport } from './routes/tokens'
+import { Route as TrackersRouteImport } from './routes/trackers'
+import { Route as TutorialsRouteImport } from './routes/tutorials'
+import { Route as ViewsRouteImport } from './routes/views'
+import { Route as WebRouteImport } from './routes/web'
+import { Route as AuthenticatedCommunityRouteImport } from './routes/_authenticated/community'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiImageRouteImport } from './routes/api/image'
+import { Route as ApiPublicPushDailyRouteImport } from './routes/api/public/push-daily'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssistantRoute = AssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CodexRoute = CodexRouteImport.update({
+  id: '/codex',
+  path: '/codex',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DonateRoute = DonateRouteImport.update({
+  id: '/donate',
+  path: '/donate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GamesRoute = GamesRouteImport.update({
+  id: '/games',
+  path: '/games',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImagineRoute = ImagineRouteImport.update({
+  id: '/imagine',
+  path: '/imagine',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LobbyRoute = LobbyRouteImport.update({
+  id: '/lobby',
+  path: '/lobby',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsRoute = NewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ObjectsRoute = ObjectsRouteImport.update({
+  id: '/objects',
+  path: '/objects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PetsRoute = PetsRouteImport.update({
+  id: '/pets',
+  path: '/pets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProRoute = ProRouteImport.update({
+  id: '/pro',
+  path: '/pro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SecurityRoute = SecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SkyEventsRoute = SkyEventsRouteImport.update({
+  id: '/sky-events',
+  path: '/sky-events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SkymapRoute = SkymapRouteImport.update({
+  id: '/skymap',
+  path: '/skymap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SolarSystemRoute = SolarSystemRouteImport.update({
+  id: '/solar-system',
+  path: '/solar-system',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportUsRoute = SupportUsRouteImport.update({
+  id: '/support-us',
+  path: '/support-us',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TokensRoute = TokensRouteImport.update({
+  id: '/tokens',
+  path: '/tokens',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrackersRoute = TrackersRouteImport.update({
+  id: '/trackers',
+  path: '/trackers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TutorialsRoute = TutorialsRouteImport.update({
+  id: '/tutorials',
+  path: '/tutorials',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ViewsRoute = ViewsRouteImport.update({
+  id: '/views',
+  path: '/views',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WebRoute = WebRouteImport.update({
+  id: '/web',
+  path: '/web',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedCommunityRoute = AuthenticatedCommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiImageRoute = ApiImageRouteImport.update({
+  id: '/api/image',
+  path: '/api/image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPushDailyRoute = ApiPublicPushDailyRouteImport.update({
+  id: '/api/public/push-daily',
+  path: '/api/public/push-daily',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/assistant': typeof AssistantRoute
+  '/auth': typeof AuthRoute
+  '/calendar': typeof CalendarRoute
+  '/codex': typeof CodexRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
+  '/donate': typeof DonateRoute
+  '/events': typeof EventsRoute
+  '/gallery': typeof GalleryRoute
+  '/games': typeof GamesRoute
+  '/imagine': typeof ImagineRoute
+  '/lobby': typeof LobbyRoute
+  '/news': typeof NewsRoute
+  '/objects': typeof ObjectsRoute
+  '/pets': typeof PetsRoute
+  '/pro': typeof ProRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/security': typeof SecurityRoute
+  '/services': typeof ServicesRoute
+  '/sky-events': typeof SkyEventsRoute
+  '/skymap': typeof SkymapRoute
+  '/solar-system': typeof SolarSystemRoute
+  '/support-us': typeof SupportUsRoute
+  '/tokens': typeof TokensRoute
+  '/trackers': typeof TrackersRoute
+  '/tutorials': typeof TutorialsRoute
+  '/views': typeof ViewsRoute
+  '/web': typeof WebRoute
+  '/community': typeof AuthenticatedCommunityRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/image': typeof ApiImageRoute
+  '/api/public/push-daily': typeof ApiPublicPushDailyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/assistant': typeof AssistantRoute
+  '/auth': typeof AuthRoute
+  '/calendar': typeof CalendarRoute
+  '/codex': typeof CodexRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
+  '/donate': typeof DonateRoute
+  '/events': typeof EventsRoute
+  '/gallery': typeof GalleryRoute
+  '/games': typeof GamesRoute
+  '/imagine': typeof ImagineRoute
+  '/lobby': typeof LobbyRoute
+  '/news': typeof NewsRoute
+  '/objects': typeof ObjectsRoute
+  '/pets': typeof PetsRoute
+  '/pro': typeof ProRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/security': typeof SecurityRoute
+  '/services': typeof ServicesRoute
+  '/sky-events': typeof SkyEventsRoute
+  '/skymap': typeof SkymapRoute
+  '/solar-system': typeof SolarSystemRoute
+  '/support-us': typeof SupportUsRoute
+  '/tokens': typeof TokensRoute
+  '/trackers': typeof TrackersRoute
+  '/tutorials': typeof TutorialsRoute
+  '/views': typeof ViewsRoute
+  '/web': typeof WebRoute
+  '/community': typeof AuthenticatedCommunityRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/image': typeof ApiImageRoute
+  '/api/public/push-daily': typeof ApiPublicPushDailyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/assistant': typeof AssistantRoute
+  '/auth': typeof AuthRoute
+  '/calendar': typeof CalendarRoute
+  '/codex': typeof CodexRoute
+  '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
+  '/donate': typeof DonateRoute
+  '/events': typeof EventsRoute
+  '/gallery': typeof GalleryRoute
+  '/games': typeof GamesRoute
+  '/imagine': typeof ImagineRoute
+  '/lobby': typeof LobbyRoute
+  '/news': typeof NewsRoute
+  '/objects': typeof ObjectsRoute
+  '/pets': typeof PetsRoute
+  '/pro': typeof ProRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/security': typeof SecurityRoute
+  '/services': typeof ServicesRoute
+  '/sky-events': typeof SkyEventsRoute
+  '/skymap': typeof SkymapRoute
+  '/solar-system': typeof SolarSystemRoute
+  '/support-us': typeof SupportUsRoute
+  '/tokens': typeof TokensRoute
+  '/trackers': typeof TrackersRoute
+  '/tutorials': typeof TutorialsRoute
+  '/views': typeof ViewsRoute
+  '/web': typeof WebRoute
+  '/_authenticated/community': typeof AuthenticatedCommunityRoute
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/image': typeof ApiImageRoute
+  '/api/public/push-daily': typeof ApiPublicPushDailyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/assistant'
+    | '/auth'
+    | '/calendar'
+    | '/codex'
+    | '/contact'
+    | '/cookies'
+    | '/donate'
+    | '/events'
+    | '/gallery'
+    | '/games'
+    | '/imagine'
+    | '/lobby'
+    | '/news'
+    | '/objects'
+    | '/pets'
+    | '/pro'
+    | '/reset-password'
+    | '/security'
+    | '/services'
+    | '/sky-events'
+    | '/skymap'
+    | '/solar-system'
+    | '/support-us'
+    | '/tokens'
+    | '/trackers'
+    | '/tutorials'
+    | '/views'
+    | '/web'
+    | '/community'
+    | '/notifications'
+    | '/profile'
+    | '/api/chat'
+    | '/api/image'
+    | '/api/public/push-daily'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/assistant'
+    | '/auth'
+    | '/calendar'
+    | '/codex'
+    | '/contact'
+    | '/cookies'
+    | '/donate'
+    | '/events'
+    | '/gallery'
+    | '/games'
+    | '/imagine'
+    | '/lobby'
+    | '/news'
+    | '/objects'
+    | '/pets'
+    | '/pro'
+    | '/reset-password'
+    | '/security'
+    | '/services'
+    | '/sky-events'
+    | '/skymap'
+    | '/solar-system'
+    | '/support-us'
+    | '/tokens'
+    | '/trackers'
+    | '/tutorials'
+    | '/views'
+    | '/web'
+    | '/community'
+    | '/notifications'
+    | '/profile'
+    | '/api/chat'
+    | '/api/image'
+    | '/api/public/push-daily'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/about'
+    | '/admin'
+    | '/assistant'
+    | '/auth'
+    | '/calendar'
+    | '/codex'
+    | '/contact'
+    | '/cookies'
+    | '/donate'
+    | '/events'
+    | '/gallery'
+    | '/games'
+    | '/imagine'
+    | '/lobby'
+    | '/news'
+    | '/objects'
+    | '/pets'
+    | '/pro'
+    | '/reset-password'
+    | '/security'
+    | '/services'
+    | '/sky-events'
+    | '/skymap'
+    | '/solar-system'
+    | '/support-us'
+    | '/tokens'
+    | '/trackers'
+    | '/tutorials'
+    | '/views'
+    | '/web'
+    | '/_authenticated/community'
+    | '/_authenticated/notifications'
+    | '/_authenticated/profile'
+    | '/api/chat'
+    | '/api/image'
+    | '/api/public/push-daily'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
+  AssistantRoute: typeof AssistantRoute
+  AuthRoute: typeof AuthRoute
+  CalendarRoute: typeof CalendarRoute
+  CodexRoute: typeof CodexRoute
+  ContactRoute: typeof ContactRoute
+  CookiesRoute: typeof CookiesRoute
+  DonateRoute: typeof DonateRoute
+  EventsRoute: typeof EventsRoute
+  GalleryRoute: typeof GalleryRoute
+  GamesRoute: typeof GamesRoute
+  ImagineRoute: typeof ImagineRoute
+  LobbyRoute: typeof LobbyRoute
+  NewsRoute: typeof NewsRoute
+  ObjectsRoute: typeof ObjectsRoute
+  PetsRoute: typeof PetsRoute
+  ProRoute: typeof ProRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  SecurityRoute: typeof SecurityRoute
+  ServicesRoute: typeof ServicesRoute
+  SkyEventsRoute: typeof SkyEventsRoute
+  SkymapRoute: typeof SkymapRoute
+  SolarSystemRoute: typeof SolarSystemRoute
+  SupportUsRoute: typeof SupportUsRoute
+  TokensRoute: typeof TokensRoute
+  TrackersRoute: typeof TrackersRoute
+  TutorialsRoute: typeof TutorialsRoute
+  ViewsRoute: typeof ViewsRoute
+  WebRoute: typeof WebRoute
+  ApiChatRoute: typeof ApiChatRoute
+  ApiImageRoute: typeof ApiImageRoute
+  ApiPublicPushDailyRoute: typeof ApiPublicPushDailyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +526,319 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assistant': {
+      id: '/assistant'
+      path: '/assistant'
+      fullPath: '/assistant'
+      preLoaderRoute: typeof AssistantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/codex': {
+      id: '/codex'
+      path: '/codex'
+      fullPath: '/codex'
+      preLoaderRoute: typeof CodexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/donate': {
+      id: '/donate'
+      path: '/donate'
+      fullPath: '/donate'
+      preLoaderRoute: typeof DonateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/games': {
+      id: '/games'
+      path: '/games'
+      fullPath: '/games'
+      preLoaderRoute: typeof GamesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/imagine': {
+      id: '/imagine'
+      path: '/imagine'
+      fullPath: '/imagine'
+      preLoaderRoute: typeof ImagineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lobby': {
+      id: '/lobby'
+      path: '/lobby'
+      fullPath: '/lobby'
+      preLoaderRoute: typeof LobbyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news': {
+      id: '/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/objects': {
+      id: '/objects'
+      path: '/objects'
+      fullPath: '/objects'
+      preLoaderRoute: typeof ObjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pets': {
+      id: '/pets'
+      path: '/pets'
+      fullPath: '/pets'
+      preLoaderRoute: typeof PetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pro': {
+      id: '/pro'
+      path: '/pro'
+      fullPath: '/pro'
+      preLoaderRoute: typeof ProRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/security': {
+      id: '/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sky-events': {
+      id: '/sky-events'
+      path: '/sky-events'
+      fullPath: '/sky-events'
+      preLoaderRoute: typeof SkyEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/skymap': {
+      id: '/skymap'
+      path: '/skymap'
+      fullPath: '/skymap'
+      preLoaderRoute: typeof SkymapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solar-system': {
+      id: '/solar-system'
+      path: '/solar-system'
+      fullPath: '/solar-system'
+      preLoaderRoute: typeof SolarSystemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support-us': {
+      id: '/support-us'
+      path: '/support-us'
+      fullPath: '/support-us'
+      preLoaderRoute: typeof SupportUsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tokens': {
+      id: '/tokens'
+      path: '/tokens'
+      fullPath: '/tokens'
+      preLoaderRoute: typeof TokensRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trackers': {
+      id: '/trackers'
+      path: '/trackers'
+      fullPath: '/trackers'
+      preLoaderRoute: typeof TrackersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tutorials': {
+      id: '/tutorials'
+      path: '/tutorials'
+      fullPath: '/tutorials'
+      preLoaderRoute: typeof TutorialsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/views': {
+      id: '/views'
+      path: '/views'
+      fullPath: '/views'
+      preLoaderRoute: typeof ViewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/web': {
+      id: '/web'
+      path: '/web'
+      fullPath: '/web'
+      preLoaderRoute: typeof WebRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/community': {
+      id: '/_authenticated/community'
+      path: '/community'
+      fullPath: '/community'
+      preLoaderRoute: typeof AuthenticatedCommunityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/image': {
+      id: '/api/image'
+      path: '/api/image'
+      fullPath: '/api/image'
+      preLoaderRoute: typeof ApiImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/push-daily': {
+      id: '/api/public/push-daily'
+      path: '/api/public/push-daily'
+      fullPath: '/api/public/push-daily'
+      preLoaderRoute: typeof ApiPublicPushDailyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCommunityRoute: typeof AuthenticatedCommunityRoute
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCommunityRoute: AuthenticatedCommunityRoute,
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
+  AssistantRoute: AssistantRoute,
+  AuthRoute: AuthRoute,
+  CalendarRoute: CalendarRoute,
+  CodexRoute: CodexRoute,
+  ContactRoute: ContactRoute,
+  CookiesRoute: CookiesRoute,
+  DonateRoute: DonateRoute,
+  EventsRoute: EventsRoute,
+  GalleryRoute: GalleryRoute,
+  GamesRoute: GamesRoute,
+  ImagineRoute: ImagineRoute,
+  LobbyRoute: LobbyRoute,
+  NewsRoute: NewsRoute,
+  ObjectsRoute: ObjectsRoute,
+  PetsRoute: PetsRoute,
+  ProRoute: ProRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  SecurityRoute: SecurityRoute,
+  ServicesRoute: ServicesRoute,
+  SkyEventsRoute: SkyEventsRoute,
+  SkymapRoute: SkymapRoute,
+  SolarSystemRoute: SolarSystemRoute,
+  SupportUsRoute: SupportUsRoute,
+  TokensRoute: TokensRoute,
+  TrackersRoute: TrackersRoute,
+  TutorialsRoute: TutorialsRoute,
+  ViewsRoute: ViewsRoute,
+  WebRoute: WebRoute,
+  ApiChatRoute: ApiChatRoute,
+  ApiImageRoute: ApiImageRoute,
+  ApiPublicPushDailyRoute: ApiPublicPushDailyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

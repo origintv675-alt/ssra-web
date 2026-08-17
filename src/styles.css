@@ -61,75 +61,71 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
+@theme inline {
+  --font-display: "Orbitron", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --color-glass: var(--glass);
+  --color-glass-border: var(--glass-border);
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-drift: drift 26s linear infinite;
+  --animate-pulse-glow: pulse-glow 3.5s ease-in-out infinite;
+  --animate-spin-slow: spin 26s linear infinite;
+  --animate-scan: scan 6s linear infinite;
 }
 
-.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+/* SSRA design system — dark cosmic liquid glass with cyan / magenta neon */
+:root {
+  --radius: 1.1rem;
+  --background: oklch(0.13 0.045 268);
+  --foreground: oklch(0.97 0.012 250);
+  --card: oklch(0.2 0.055 268 / 55%);
+  --card-foreground: oklch(0.97 0.012 250);
+  --popover: oklch(0.17 0.05 268 / 92%);
+  --popover-foreground: oklch(0.97 0.012 250);
+  --primary: oklch(0.8 0.15 220);
+  --primary-foreground: oklch(0.15 0.05 260);
+  --secondary: oklch(0.28 0.075 268 / 70%);
+  --secondary-foreground: oklch(0.96 0.01 250);
+  --muted: oklch(0.27 0.06 270 / 60%);
+  --muted-foreground: oklch(0.75 0.035 265);
+  --accent: oklch(0.72 0.2 305);
+  --accent-foreground: oklch(0.14 0.04 280);
+  --destructive: oklch(0.65 0.23 20);
+  --destructive-foreground: oklch(0.98 0.01 250);
+  --border: oklch(0.86 0.09 235 / 20%);
+  --input: oklch(0.86 0.09 235 / 16%);
+  --ring: oklch(0.8 0.15 220);
+  --glass: oklch(0.72 0.12 250 / 10%);
+  --glass-border: oklch(0.92 0.08 235 / 26%);
+  --chart-1: oklch(0.82 0.16 196);
+  --chart-2: oklch(0.74 0.23 330);
+  --chart-3: oklch(0.7 0.18 275);
+  --chart-4: oklch(0.85 0.17 95);
+  --chart-5: oklch(0.7 0.2 150);
+  --sidebar: oklch(0.17 0.045 275 / 70%);
+  --sidebar-foreground: oklch(0.96 0.01 250);
+  --sidebar-primary: oklch(0.82 0.16 196);
+  --sidebar-primary-foreground: oklch(0.15 0.05 260);
+  --sidebar-accent: oklch(0.26 0.06 280 / 70%);
+  --sidebar-accent-foreground: oklch(0.96 0.01 250);
+  --sidebar-border: oklch(0.9 0.08 240 / 18%);
+  --sidebar-ring: oklch(0.82 0.16 196);
+
+  --gradient-neon: linear-gradient(
+    100deg,
+    oklch(0.84 0.14 205),
+    oklch(0.7 0.19 268),
+    oklch(0.73 0.2 312)
+  );
+  --gradient-deep: radial-gradient(
+    120% 90% at 50% -10%,
+    oklch(0.34 0.15 272 / 60%),
+    transparent 60%
+  );
+  --shadow-neon:
+    inset 0 1px 0 oklch(1 0 0 / 16%), 0 0 0 1px oklch(0.86 0.12 230 / 18%),
+    0 22px 70px -24px oklch(0.62 0.2 272 / 65%);
+  --shadow-glow-cyan: 0 0 46px -6px oklch(0.8 0.15 220 / 55%);
 }
 
 @layer base {
@@ -137,8 +133,488 @@
     border-color: var(--color-border);
   }
 
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
   }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: var(--gradient-deep);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: oklch(0.74 0.23 330 / 40%);
+  }
+}
+
+@utility glass-panel {
+  background:
+    linear-gradient(
+      160deg,
+      oklch(0.95 0.06 230 / 14%),
+      oklch(0.7 0.12 250 / 6%) 42%,
+      oklch(0.6 0.14 280 / 9%)
+    );
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(26px) saturate(165%);
+  box-shadow: var(--shadow-neon);
+  border-radius: var(--radius);
+  position: relative;
+
+  /* Liquid highlight running along the top edge of the glass surface. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      oklch(1 0 0 / 55%) 35%,
+      oklch(0.85 0.14 220 / 60%) 65%,
+      transparent
+    );
+    pointer-events: none;
+  }
+}
+
+@utility glass-soft {
+  background: oklch(0.7 0.1 260 / 5%);
+  border: 1px solid oklch(0.9 0.08 240 / 14%);
+  backdrop-filter: blur(14px);
+  border-radius: var(--radius);
+}
+
+@utility neon-text {
+  background: var(--gradient-neon);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility neon-ring {
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+@utility gradient-neon {
+  background-image: var(--gradient-neon);
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1.05);
+  }
+  to {
+    transform: translate3d(-3%, 2%, 0) scale(1.12);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes scan {
+  from {
+    transform: translateY(-120%);
+  }
+  to {
+    transform: translateY(320%);
+  }
+}
+
+/* ---------- Time-of-day sky phases (driven by the visitor's local clock) ---------- */
+html[data-sky="day"] {
+  --background: oklch(0.22 0.045 265);
+  --card: oklch(0.28 0.05 265 / 55%);
+  --muted-foreground: oklch(0.8 0.03 265);
+}
+
+html[data-sky="dusk"] {
+  --background: oklch(0.17 0.05 290);
+}
+
+html[data-sky="day"] body::before {
+  background: radial-gradient(120% 90% at 50% -10%, oklch(0.55 0.11 235 / 45%), transparent 62%);
+}
+
+html[data-sky="night"] body::before {
+  background:
+    radial-gradient(120% 90% at 50% -10%, oklch(0.3 0.12 300 / 55%), transparent 60%),
+    radial-gradient(90% 60% at 80% 110%, oklch(0.4 0.16 155 / 22%), transparent 65%);
+}
+
+/* ---------- Comet pointer ---------- */
+html.comet-cursor,
+html.comet-cursor body {
+  cursor: none;
+}
+
+@media (hover: none) {
+  html.comet-cursor,
+  html.comet-cursor body {
+    cursor: auto;
+  }
+}
+
+/* When the comet has faded out (pointer idle) hand the native cursor back. */
+html.comet-cursor.comet-hidden,
+html.comet-cursor.comet-hidden body,
+html.comet-cursor.comet-hidden a,
+html.comet-cursor.comet-hidden button,
+html.comet-cursor.comet-hidden [role="button"],
+html.comet-cursor.comet-hidden input,
+html.comet-cursor.comet-hidden textarea,
+html.comet-cursor.comet-hidden select {
+  cursor: auto;
+}
+
+html.comet-cursor a,
+html.comet-cursor button,
+html.comet-cursor [role="button"],
+html.comet-cursor input,
+html.comet-cursor textarea,
+html.comet-cursor select {
+  cursor: none;
+}
+
+/* ---------- Intro sequence ---------- */
+@keyframes intro-launch {
+  0% {
+    transform: translate(-50%, 40px) scale(0.9);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -220px) scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes intro-eclipse {
+  0% {
+    transform: translateX(-130%);
+  }
+  55% {
+    transform: translateX(-6%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes aurora-shift {
+  0%,
+  100% {
+    transform: translateX(-4%) skewY(-2deg);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateX(4%) skewY(2deg);
+    opacity: 1;
+  }
+}
+
+@keyframes orbit-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@utility glass-inset {
+  background: linear-gradient(150deg, oklch(0.85 0.09 240 / 10%), oklch(0.7 0.1 260 / 3%));
+  border: 1px solid oklch(0.9 0.08 240 / 16%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border-radius: var(--radius);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 12%), 0 20px 50px -28px oklch(0.6 0.2 300 / 70%);
+}
+
+@utility aurora-band {
+  background: linear-gradient(
+    100deg,
+    oklch(0.8 0.2 155 / 0),
+    oklch(0.8 0.2 155 / 35%),
+    oklch(0.82 0.16 196 / 30%),
+    oklch(0.74 0.23 330 / 25%),
+    oklch(0.8 0.2 155 / 0)
+  );
+  filter: blur(26px);
+  animation: aurora-shift 14s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------------------
+ * Tormentor sequence: an admin-triggered haunting aimed at a single visitor.
+ * ------------------------------------------------------------------------ */
+
+@keyframes tormentor-run-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(1.08); }
+}
+
+@keyframes tormentor-shake {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  20% { transform: translate3d(-6px, 4px, 0) rotate(-0.4deg); }
+  40% { transform: translate3d(7px, -5px, 0) rotate(0.5deg); }
+  60% { transform: translate3d(-5px, -3px, 0); }
+  80% { transform: translate3d(4px, 6px, 0) rotate(-0.3deg); }
+}
+
+@keyframes tormentor-hand-shove {
+  0% { transform: translate3d(-40%, 70%, 0) rotate(-12deg); opacity: 0; }
+  35% { transform: translate3d(-4%, 6%, 0) rotate(2deg); opacity: 1; }
+  55% { transform: translate3d(-9%, 12%, 0) rotate(-1deg); }
+  100% { transform: translate3d(-12%, 16%, 0) rotate(-2deg); opacity: 0.92; }
+}
+
+@keyframes tormentor-peek {
+  0% { transform: translate3d(-50%, 24%, 0) scale(0.7); opacity: 0; filter: blur(14px); }
+  60% { transform: translate3d(-50%, -2%, 0) scale(1); opacity: 1; filter: blur(0); }
+  100% { transform: translate3d(-50%, -6%, 0) scale(1.06); opacity: 1; }
+}
+
+@keyframes tormentor-flicker {
+  0%, 100% { opacity: 0.9; }
+  12% { opacity: 0.25; }
+  16% { opacity: 0.95; }
+  47% { opacity: 0.4; }
+  52% { opacity: 1; }
+  79% { opacity: 0.55; }
+}
+
+@keyframes tormentor-drip {
+  0% { transform: scaleY(0); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: scaleY(1); opacity: 0.9; }
+}
+
+.tormentor-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  overflow: hidden;
+  pointer-events: all;
+  animation: tormentor-shake 0.9s infinite;
+}
+
+.tormentor-dark {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 45%, oklch(0.12 0.02 20 / 82%), oklch(0 0 0) 62%);
+}
+
+.tormentor-run {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.tormentor-run-word {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 22vw, 14rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: oklch(0.55 0.24 27);
+  text-shadow: 0 0 40px oklch(0.5 0.25 27 / 70%);
+  animation: tormentor-run-pulse 0.55s infinite;
+}
+
+.tormentor-run-distance {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 6vw, 3rem);
+  color: oklch(0.92 0.02 20);
+  letter-spacing: 0.3em;
+}
+
+.tormentor-run-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: oklch(0.6 0.05 20);
+}
+
+.tormentor-hand {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: min(70vw, 620px);
+  transform-origin: bottom left;
+  animation: tormentor-hand-shove 0.9s cubic-bezier(0.22, 1.4, 0.4, 1) forwards;
+  filter: drop-shadow(0 0 30px oklch(0 0 0 / 90%));
+}
+
+.tormentor-face {
+  position: absolute;
+  left: 50%;
+  top: 6%;
+  width: min(78vw, 640px);
+  animation: tormentor-peek 1.6s ease-out forwards;
+  filter: drop-shadow(0 0 60px oklch(0 0 0));
+}
+
+.tormentor-cracks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  mix-blend-mode: screen;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.tormentor-offline {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 0.75rem;
+  text-align: center;
+  background: oklch(0 0 0);
+  font-family: ui-monospace, "SFMono-Regular", monospace;
+  animation: tormentor-flicker 1.8s infinite;
+}
+
+.tormentor-offline-title {
+  font-size: clamp(1.5rem, 7vw, 3.5rem);
+  letter-spacing: 0.35em;
+  color: oklch(0.85 0.02 20);
+}
+
+.tormentor-offline-note {
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: oklch(0.5 0.04 20);
+}
+
+.tormentor-banned {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: grid;
+  place-content: center;
+  gap: 0.9rem;
+  padding: 2rem;
+  text-align: center;
+  background: oklch(0.04 0.01 20);
+}
+
+.tormentor-banned-code {
+  font-family: ui-monospace, "SFMono-Regular", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: oklch(0.55 0.24 27);
+}
+
+.tormentor-banned-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 5vw, 2.8rem);
+  color: oklch(0.92 0.02 20);
+}
+
+.tormentor-banned-note {
+  font-size: 0.85rem;
+  color: oklch(0.55 0.03 20);
+}
+
+/* Aftermath ---------------------------------------------------------------- */
+
+html.is-ruined body {
+  filter: grayscale(0.55) contrast(1.25) saturate(0.7) hue-rotate(-12deg);
+}
+
+html.is-ruined body > * {
+  animation: tormentor-shake 6s infinite;
+}
+
+.tormentor-ruin {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.tormentor-ruin-dark {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, transparent 8%, oklch(0.05 0.02 20 / 88%) 78%);
+  animation: tormentor-flicker 5s infinite;
+}
+
+.tormentor-ruin-organs {
+  position: absolute;
+  inset: 0;
+  opacity: 0.32;
+  background:
+    radial-gradient(ellipse at 12% 82%, oklch(0.3 0.16 25 / 85%), transparent 42%),
+    radial-gradient(ellipse at 88% 18%, oklch(0.26 0.15 20 / 80%), transparent 38%),
+    radial-gradient(ellipse at 72% 92%, oklch(0.22 0.14 15 / 85%), transparent 34%);
+  mix-blend-mode: multiply;
+}
+
+.tormentor-drip {
+  position: absolute;
+  top: 0;
+  width: 5px;
+  border-radius: 0 0 999px 999px;
+  background: linear-gradient(oklch(0.32 0.19 25), oklch(0.18 0.14 22));
+  transform-origin: top center;
+  animation: tormentor-drip 9s ease-in forwards;
+}
+
+.tormentor-ruin-face {
+  position: absolute;
+  right: -6%;
+  bottom: -8%;
+  width: min(46vw, 420px);
+  opacity: 0.32;
+  animation: tormentor-flicker 7s infinite;
+  filter: drop-shadow(0 0 40px oklch(0 0 0));
+}
+
+.tormentor-ruin .tormentor-cracks {
+  opacity: 0.35;
 }
