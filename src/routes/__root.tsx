@@ -24,7 +24,9 @@ import { SiteGuard } from "@/components/SiteGuard";
 import { PresenceTracker } from "@/components/PresenceTracker";
 import { PetCompanion } from "@/components/PetCompanion";
 import { PetSettingsPanel } from "@/components/PetSettingsPanel";
+import { TormentorLayer } from "@/components/TormentorLayer";
 import { useDailyAlerts } from "@/lib/dailyAlerts";
+
 
 function NotFoundComponent() {
   return (
@@ -163,7 +165,9 @@ function RootComponent() {
         </SiteGuard>
       </main>
       <SiteFooter />
+      <TormentorLayer />
       <Toaster />
+
     </QueryClientProvider>
   );
 }
