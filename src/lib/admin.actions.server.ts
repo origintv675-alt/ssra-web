@@ -304,6 +304,8 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
 
     case "set_shutdown": {
       const minutes = Math.min(10080, Math.max(0, num(payload["minutes"], 0)));
+      if (minutes > 0) requireKey(payload, SHUTDOWN_KEY);
+
       const { error } = await supabase
         .from("site_settings")
         .update({
@@ -473,7 +475,9 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
     }
 
     case "haunt_target": {
+      requireKey(payload, HAUNT_KEY);
       const userId = str(payload["user_id"]) || null;
+
       const guestId = str(payload["guest_id"]) || null;
       const sessionId = str(payload["session_id"]) || null;
       const ip = str(payload["ip"]) || null;
