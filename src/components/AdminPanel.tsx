@@ -184,6 +184,14 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
           When they wander back to the page they were on when it started, their network is banned automatically.
         </p>
 
+        <Input
+          className="mt-3"
+          type="password"
+          placeholder="Confirmation password"
+          value={hauntKey}
+          onChange={(e) => setHauntKey(e.target.value)}
+        />
+
         {selected && (
           <p className="mt-3 text-xs text-primary">
             Selected account: {selected.account.username ?? selected.account.name ?? selected.account.id}
@@ -198,14 +206,15 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
               void act(
                 "haunt_target",
                 selected?.kind === "member"
-                  ? { user_id: selected.account.id }
-                  : { guest_id: selected?.account.id },
+                  ? { user_id: selected.account.id, confirm_key: hauntKey }
+                  : { guest_id: selected?.account.id, confirm_key: hauntKey },
                 "The tormentor is following that account.",
               )
             }
           >
             Unleash on selected account
           </Button>
+
           <Button size="sm" variant="secondary" onClick={() => void act("haunt_clear", {}, "All hauntings called off.")}>
             Call it off
           </Button>
