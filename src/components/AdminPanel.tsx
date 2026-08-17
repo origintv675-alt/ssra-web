@@ -175,8 +175,8 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
         )}
       </section>
 
-      <section className="glass-panel p-5">
       <section className="glass-panel border-destructive/40 p-5">
+
         <h2 className="text-lg font-semibold text-destructive">The tormentor</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           Unleashes the full sequence on one person: darkness and the run warning, the hand cracking the glass,
