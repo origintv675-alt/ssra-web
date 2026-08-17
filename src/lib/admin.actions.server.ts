@@ -449,6 +449,45 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
       };
     }
 
+    // The tormentor: a haunting aimed at one visitor, ending in an IP ban.
+    case "list_haunts": {
+      const { data, error } = await supabase
+        .from("haunts")
+        .select("id, stage, origin_path, target_ip, target_session_id, target_user_id, target_guest_id, created_at")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (error) throw new Error(error.message);
+      return { haunts: data ?? [] };
+    }
+
+    case "haunt_target": {
+      const userId = str(payload["user_id"]) || null;
+      const guestId = str(payload["guest_id"]) || null;
+      const sessionId = str(payload["session_id"]) || null;
+      const ip = str(payload["ip"]) || null;
+      if (!userId && !guestId && !sessionId && !ip) throw new Error("Pick who the tormentor should follow.");
+      const { error } = await supabase.from("haunts").insert({
+        target_user_id: userId,
+        target_guest_id: guestId,
+        target_session_id: sessionId,
+        target_ip: ip,
+        origin_path: str(payload["origin_path"]) || null,
+        stage: "armed",
+      });
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    case "haunt_clear": {
+      const id = str(payload["id"]);
+      const query = supabase.from("haunts").delete();
+      const { error } = id
+        ? await query.eq("id", id)
+        : await query.neq("id", "00000000-0000-0000-0000-000000000000");
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
     default:
       throw new Error("Unknown admin action.");
   }
