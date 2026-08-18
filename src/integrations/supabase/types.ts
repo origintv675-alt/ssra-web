@@ -82,16 +82,19 @@ export type Database = {
       banned_ips: {
         Row: {
           created_at: string
+          expires_at: string | null
           ip: string
           reason: string | null
         }
         Insert: {
           created_at?: string
+          expires_at?: string | null
           ip: string
           reason?: string | null
         }
         Update: {
           created_at?: string
+          expires_at?: string | null
           ip?: string
           reason?: string | null
         }
@@ -263,6 +266,7 @@ export type Database = {
           badge: string | null
           ban_reason: string | null
           banned: boolean
+          banned_until: string | null
           created_at: string
           id: string
           is_pro: boolean
@@ -277,6 +281,7 @@ export type Database = {
           badge?: string | null
           ban_reason?: string | null
           banned?: boolean
+          banned_until?: string | null
           created_at?: string
           id?: string
           is_pro?: boolean
@@ -291,6 +296,7 @@ export type Database = {
           badge?: string | null
           ban_reason?: string | null
           banned?: boolean
+          banned_until?: string | null
           created_at?: string
           id?: string
           is_pro?: boolean
@@ -341,6 +347,7 @@ export type Database = {
       }
       haunts: {
         Row: {
+          ban_type: string
           banned: boolean
           created_at: string
           created_by: string
@@ -357,6 +364,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          ban_type?: string
           banned?: boolean
           created_at?: string
           created_by?: string
@@ -373,6 +381,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          ban_type?: string
           banned?: boolean
           created_at?: string
           created_by?: string
@@ -610,6 +619,7 @@ export type Database = {
           badge: string | null
           ban_reason: string | null
           banned: boolean
+          banned_until: string | null
           bio: string | null
           created_at: string
           id: string
@@ -627,6 +637,7 @@ export type Database = {
           badge?: string | null
           ban_reason?: string | null
           banned?: boolean
+          banned_until?: string | null
           bio?: string | null
           created_at?: string
           id: string
@@ -644,6 +655,7 @@ export type Database = {
           badge?: string | null
           ban_reason?: string | null
           banned?: boolean
+          banned_until?: string | null
           bio?: string | null
           created_at?: string
           id?: string
