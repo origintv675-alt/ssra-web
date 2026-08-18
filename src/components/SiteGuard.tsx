@@ -4,6 +4,22 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { useGuard } from "@/lib/guard";
 
+/** A timed punishment counts itself down so they know when it lifts. */
+function Countdown({ until }: { until: string }) {
+  const left = new Date(until).getTime() - Date.now();
+  if (left <= 0) return null;
+  const hours = Math.floor(left / 3_600_000);
+  const mins = Math.floor((left % 3_600_000) / 60_000);
+  const secs = Math.floor((left % 60_000) / 1000);
+  return (
+    <p className="mt-6 font-display text-2xl tracking-widest text-primary">
+      {hours > 0 ? `${hours}h ` : ""}
+      {String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}
+      <span className="mt-2 block text-xs uppercase tracking-[0.3em] text-muted-foreground">until it lifts</span>
+    </p>
+  );
+}
+
 function Screen({
   icon,
   title,
@@ -47,10 +63,11 @@ export function SiteGuard({ children }: { children: ReactNode }) {
 
   if (state?.ipBanned) {
     return (
-      <Screen icon={<Ban className="mx-auto h-10 w-10 text-destructive" />} title="This device is banned">
+      <Screen icon={<Ban className="mx-auto h-10 w-10 text-destructive" />} title={state.banUntil ? "This device is on timeout" : "This device is banned"}>
         <p className="mt-3 text-sm text-muted-foreground">
           {state.ipReason || "An SSRA admin blocked this network from the site."}
         </p>
+        {state.banUntil && <Countdown until={state.banUntil} />}
       </Screen>
     );
   }
@@ -61,6 +78,7 @@ export function SiteGuard({ children }: { children: ReactNode }) {
         <p className="mt-3 text-sm text-muted-foreground">
           {state.guestBanReason || "An SSRA admin banned this guest account."}
         </p>
+        {state.banUntil && <Countdown until={state.banUntil} />}
       </Screen>
     );
   }
@@ -71,6 +89,7 @@ export function SiteGuard({ children }: { children: ReactNode }) {
         <p className="mt-3 text-sm text-muted-foreground">
           {state.memberBanReason || "An SSRA admin banned this member account."}
         </p>
+        {state.banUntil && <Countdown until={state.banUntil} />}
       </Screen>
     );
   }
