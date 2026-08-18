@@ -115,6 +115,45 @@ function RuinedWorld() {
 }
 
 
+type Victim = { top: number; left: number; width: number; height: number; side: "left" | "right" };
+
+/**
+ * Finds the biggest piece of interface closest to where the visitor is looking —
+ * that is the thing the hand shoves when they think they are hidden.
+ */
+function findVictim(): Victim | null {
+  const nodes = Array.from(
+    document.querySelectorAll<HTMLElement>(
+      ".glass-panel, .glass-soft, article, section, .card, img, h1, [data-tormentor-target]",
+    ),
+  );
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  let best: { node: HTMLElement; rect: DOMRect; score: number } | null = null;
+
+  for (const node of nodes) {
+    const rect = node.getBoundingClientRect();
+    if (rect.width < 120 || rect.height < 80) continue;
+    if (rect.bottom < 40 || rect.top > window.innerHeight - 40) continue;
+    const dx = rect.left + rect.width / 2 - cx;
+    const dy = rect.top + rect.height / 2 - cy;
+    const distance = Math.hypot(dx, dy);
+    const score = distance - Math.sqrt(rect.width * rect.height) * 0.35;
+    if (!best || score < best.score) best = { node, rect, score };
+  }
+
+  if (!best) return null;
+  best.node.classList.add("tormentor-shoved");
+  const { rect } = best;
+  return {
+    top: rect.top,
+    left: rect.left,
+    width: rect.width,
+    height: rect.height,
+    side: rect.left + rect.width / 2 > cx ? "left" : "right",
+  };
+}
+
 /**
  * The tormentor. Plays the chase, the strike, the peek and the forced shutdown
  * for one targeted visitor, then leaves their world permanently ruined.
@@ -127,8 +166,25 @@ export function TormentorLayer() {
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [distance, setDistance] = useState(500);
+  const [victim, setVictim] = useState<Victim | null>(null);
   const playing = useRef(false);
+  const peeked = useRef(false);
   const timers = useRef<number[]>([]);
+
+  // A single silent warning for token tampering: it leans in from the edge of
+  // the page, watches, and is gone again.
+  useEffect(() => {
+    if (stage !== "peek" || peeked.current || !haunt) return;
+    peeked.current = true;
+    const id = haunt.id;
+    setPhase("watch");
+    timers.current.push(
+      window.setTimeout(() => {
+        setPhase("idle");
+        void advance({ data: { id, stage: "peeked" } }).catch(() => {});
+      }, 6_000),
+    );
+  }, [stage, haunt?.id]);
 
   // Timers live in a ref so the poll advancing the stage mid-sequence can never
   // cancel the chase half way through.
