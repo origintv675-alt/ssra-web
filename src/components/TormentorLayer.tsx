@@ -240,8 +240,27 @@ export function TormentorLayer() {
   if (stage === "ruined") return <RuinedWorld />;
   if (phase === "idle") return null;
 
+  // The silent warning: it leans in from the edge of the page, then is gone.
+  if (phase === "watch") {
+    return (
+      <div className="tormentor-stage is-watch" aria-hidden>
+        <img src={faceAsset.url} alt="" className="tormentor-watch-face" />
+      </div>
+    );
+  }
+
+  // The hand and the head are pinned to whatever the visitor was hiding behind.
+  const anchor: React.CSSProperties | undefined = victim
+    ? ({
+        "--vx": `${victim.left}px`,
+        "--vy": `${victim.top}px`,
+        "--vw": `${victim.width}px`,
+        "--vh": `${victim.height}px`,
+      } as React.CSSProperties)
+    : undefined;
+
   return (
-    <div className={`tormentor-stage${phase === "run" ? " is-chase" : ""}`} aria-hidden>
+    <div className={`tormentor-stage${phase === "run" ? " is-chase" : ""}`} style={anchor} aria-hidden>
       {phase !== "offline" && (
         <>
           <div className="tormentor-dark" />
