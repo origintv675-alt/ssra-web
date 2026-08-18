@@ -209,7 +209,10 @@ export function TormentorLayer() {
     }, 60);
 
     timers.current.push(
-      window.setTimeout(() => setPhase("hand"), HAND_MS),
+      window.setTimeout(() => {
+        setVictim(findVictim());
+        setPhase("hand");
+      }, HAND_MS),
       window.setTimeout(() => setPhase("face"), FACE_MS),
       window.setTimeout(() => {
         setPhase("offline");
