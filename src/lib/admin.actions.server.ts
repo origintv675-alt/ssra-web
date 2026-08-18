@@ -1,5 +1,5 @@
 import { adminClient, EFFECT_TYPES, type EffectType } from "@/lib/admin.server";
-import { firstStage, isHauntMode } from "@/lib/haunt.server";
+import { applyPunishment, firstStage, isBanType, isHauntMode, type BanType } from "@/lib/haunt.server";
 
 type Payload = Record<string, unknown>;
 
@@ -496,7 +496,10 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
       if (!userId && !guestId && !sessionId && !ip) throw new Error("Pick who the tormentor should follow.");
       const rawMode = str(payload["mode"], "full") || "full";
       const mode = isHauntMode(rawMode) ? rawMode : "full";
+      const rawBan = str(payload["ban_type"], "ip") || "ip";
+      const banType: BanType = isBanType(rawBan) ? rawBan : "ip";
       const { error } = await supabase.from("haunts").insert({
+        ban_type: banType,
         target_user_id: userId,
         target_guest_id: guestId,
         target_session_id: sessionId,
@@ -593,10 +596,73 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
       return { ok: true };
     }
 
+    // One place for every kind of punishment an admin can hand out.
+    case "punish_account": {
+      const rawBan = str(payload["ban_type"], "account") || "account";
+      const banType: BanType = isBanType(rawBan) ? rawBan : "account";
+      const userId = str(payload["user_id"]) || null;
+      const guestId = str(payload["guest_id"]) || null;
+      let ip = str(payload["ip"]) || null;
+      if (!ip && guestId) {
+        const { data: g } = await supabase.from("guests").select("last_ip").eq("id", guestId).maybeSingle();
+        ip = (g as { last_ip?: string | null } | null)?.last_ip ?? null;
+      }
+      if (!ip && userId) {
+        const { data: v } = await supabase
+          .from("live_visitors")
+          .select("ip")
+          .eq("user_id", userId)
+          .order("last_seen_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        ip = (v as { ip?: string | null } | null)?.ip ?? null;
+      }
+      if (!userId && !guestId && !ip) throw new Error("Pick who this punishment is for.");
+      await applyPunishment({
+        banType,
+        reason: str(payload["reason"]) || "Handed down by mission control.",
+        minutes: Math.min(43_200, Math.max(1, num(payload["minutes"], 60))),
+        userId,
+        guestId,
+        ip,
+      });
+      return { ok: true, banType };
+    }
+
+    // Lift every kind of punishment from one account at once.
+    case "pardon_account": {
+      const userId = str(payload["user_id"]) || null;
+      const guestId = str(payload["guest_id"]) || null;
+      if (userId) {
+        await supabase
+          .from("profiles")
+          .update({ banned: false, ban_reason: null, banned_until: null, muted_until: null })
+          .eq("id", userId);
+      }
+      if (guestId) {
+        const { data: g } = await supabase.from("guests").select("last_ip").eq("id", guestId).maybeSingle();
+        await supabase
+          .from("guests")
+          .update({ banned: false, ban_reason: null, banned_until: null })
+          .eq("id", guestId);
+        const gip = (g as { last_ip?: string | null } | null)?.last_ip;
+        if (gip) await supabase.from("banned_ips").delete().eq("ip", gip);
+      }
+      const ip = str(payload["ip"]);
+      if (ip) await supabase.from("banned_ips").delete().eq("ip", ip);
+      return { ok: true };
+    }
+
     case "unban_everyone": {
       await supabase.from("banned_ips").delete().neq("ip", "");
-      await supabase.from("guests").update({ banned: false, ban_reason: null }).eq("banned", true);
-      await supabase.from("profiles").update({ banned: false, ban_reason: null }).eq("banned", true);
+      await supabase
+        .from("guests")
+        .update({ banned: false, ban_reason: null, banned_until: null })
+        .eq("banned", true);
+      await supabase
+        .from("profiles")
+        .update({ banned: false, ban_reason: null, banned_until: null, muted_until: null })
+        .eq("banned", true);
       return { ok: true };
     }
 

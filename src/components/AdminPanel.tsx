@@ -31,6 +31,20 @@ const HAUNT_MODES: { id: string; label: string; hint: string }[] = [
   { id: "peek", label: "One-time peek", hint: "The face leans in from the edge of one page, watches, and vanishes." },
   { id: "stalker", label: "Face stalker", hint: "The face only. It trails them across pages, creeping closer, then refreshes their page." },
   { id: "punish", label: "Punishment", hint: "Asks for their location, then reads back their address, IP and email, takes their last words and bans them." },
+  { id: "whisper", label: "Whispers", hint: "Quiet messages surface one by one, as if something is talking to them." },
+  { id: "glitch", label: "Glitch", hint: "Their colours invert and the text scrambles in waves." },
+  { id: "crawl", label: "Crawling hands", hint: "Shadow hands creep in from the edges of every page." },
+  { id: "blackout", label: "Blackout", hint: "The lights go out around them, with only a sliver of sight left." },
+];
+
+const BAN_CHOICES: { id: string; label: string }[] = [
+  { id: "none", label: "No ban" },
+  { id: "timeout", label: "Timeout" },
+  { id: "account", label: "Account ban" },
+  { id: "ip", label: "Network ban" },
+  { id: "account_ip", label: "Account + network" },
+  { id: "mute", label: "Mute" },
+  { id: "kick", label: "Kick" },
 ];
 
 type Guest = { id: string; name: string; space_tokens: number; banned: boolean; badge: string | null };
@@ -63,6 +77,8 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
   const [shutdown, setShutdown] = useState({ minutes: 10, message: "", confirm_key: "" });
   const [hauntKey, setHauntKey] = useState("");
   const [hauntMode, setHauntMode] = useState("full");
+  const [banType, setBanType] = useState("ip");
+  const [banMinutes, setBanMinutes] = useState(60);
   const [lobbySay, setLobbySay] = useState("");
 
   const [promo, setPromo] = useState({ code: "", tokens: 1000, grants_pro: false, lifetime: false, badge: "" });
@@ -216,6 +232,24 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
           {HAUNT_MODES.find((m) => m.id === hauntMode)?.hint}
         </p>
 
+        <p className="mt-4 text-xs uppercase tracking-[0.25em] text-muted-foreground">How it ends</p>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          {BAN_CHOICES.map((b) => (
+            <Button key={b.id} size="sm" variant={banType === b.id ? "destructive" : "secondary"} onClick={() => setBanType(b.id)}>
+              {b.label}
+            </Button>
+          ))}
+          <Input
+            className="w-32"
+            type="number"
+            min={1}
+            value={banMinutes}
+            onChange={(e) => setBanMinutes(Number(e.target.value) || 1)}
+            placeholder="Minutes"
+          />
+          <span className="text-xs text-muted-foreground">minutes (timeouts, mutes)</span>
+        </div>
+
         {selected && (
           <p className="mt-3 text-xs text-primary">
             Selected account: {selected.account.username ?? selected.account.name ?? selected.account.id}
@@ -230,8 +264,8 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
               void act(
                 "haunt_target",
                 selected?.kind === "member"
-                  ? { user_id: selected.account.id, confirm_key: hauntKey, mode: hauntMode }
-                  : { guest_id: selected?.account.id, confirm_key: hauntKey, mode: hauntMode },
+                  ? { user_id: selected.account.id, confirm_key: hauntKey, mode: hauntMode, ban_type: banType, minutes: banMinutes }
+                  : { guest_id: selected?.account.id, confirm_key: hauntKey, mode: hauntMode, ban_type: banType, minutes: banMinutes },
                 "The tormentor is following that account.",
               )
             }
@@ -257,7 +291,7 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
                 onClick={() =>
                   void act(
                     "haunt_target",
-                    { session_id: v.session_id, user_id: v.user_id ?? "", guest_id: v.guest_id ?? "", origin_path: v.path, confirm_key: hauntKey, mode: hauntMode },
+                    { session_id: v.session_id, user_id: v.user_id ?? "", guest_id: v.guest_id ?? "", origin_path: v.path, confirm_key: hauntKey, mode: hauntMode, ban_type: banType, minutes: banMinutes },
                     `The tormentor is following ${v.label}.`,
                   )
                 }
@@ -346,6 +380,41 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
           )}
           {selected && (
             <Button size="sm" variant="secondary" onClick={() => void act("set_badge", { [`${selected.kind === "member" ? "user" : "guest"}_id`]: selected.account.id, badge: "haunted" }, "Badge set.")}>Mark as haunted</Button>
+          )}
+          {selected && (
+            <>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() =>
+                  void act(
+                    "punish_account",
+                    {
+                      [`${selected.kind === "member" ? "user" : "guest"}_id`]: selected.account.id,
+                      ban_type: banType,
+                      minutes: banMinutes,
+                      reason: "Handed down by mission control.",
+                    },
+                    "Punishment applied.",
+                  )
+                }
+              >
+                Punish selected
+              </Button>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() =>
+                  void act(
+                    "pardon_account",
+                    { [`${selected.kind === "member" ? "user" : "guest"}_id`]: selected.account.id },
+                    "Punishment lifted.",
+                  )
+                }
+              >
+                Pardon selected
+              </Button>
+            </>
           )}
           <Button size="sm" variant="destructive" onClick={() => void act("unban_everyone", {}, "Everyone unbanned.")}>Unban everyone</Button>
         </div>
