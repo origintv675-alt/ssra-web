@@ -64,10 +64,9 @@ export function useGuard() {
   useEffect(() => {
     if (!state) return;
     const override = state.skyOverride;
-    setSiteDisplay({
-      skyOverride: isSkyMode(override) ? override : null,
-      animations: state.animationsEnabled !== false,
-    });
+    const animations = state.animationsEnabled !== false;
+    setSiteDisplay({ skyOverride: isSkyMode(override) ? override : null, animations });
+    document.documentElement.classList.toggle("no-motion", !animations);
   }, [state]);
 
   const lock = state?.locks.find((l) => l.path === path) ?? null;
