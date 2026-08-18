@@ -303,6 +303,42 @@ export type Database = {
         }
         Relationships: []
       }
+      haunt_confessions: {
+        Row: {
+          created_at: string
+          email: string | null
+          haunt_id: string | null
+          id: string
+          ip: string | null
+          label: string | null
+          latitude: number | null
+          longitude: number | null
+          words: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          haunt_id?: string | null
+          id?: string
+          ip?: string | null
+          label?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          words: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          haunt_id?: string | null
+          id?: string
+          ip?: string | null
+          label?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          words?: string
+        }
+        Relationships: []
+      }
       haunts: {
         Row: {
           banned: boolean
@@ -310,6 +346,7 @@ export type Database = {
           created_by: string
           id: string
           left_origin: boolean
+          mode: string
           origin_path: string | null
           ruined: boolean
           stage: string
@@ -325,6 +362,7 @@ export type Database = {
           created_by?: string
           id?: string
           left_origin?: boolean
+          mode?: string
           origin_path?: string | null
           ruined?: boolean
           stage?: string
@@ -340,6 +378,7 @@ export type Database = {
           created_by?: string
           id?: string
           left_origin?: boolean
+          mode?: string
           origin_path?: string | null
           ruined?: boolean
           stage?: string
@@ -790,6 +829,7 @@ export type Database = {
           link_label: string | null
           link_url: string | null
           target_guest_id: string | null
+          target_session_id: string | null
           target_user_id: string | null
           title: string
         }
@@ -802,6 +842,7 @@ export type Database = {
           link_label?: string | null
           link_url?: string | null
           target_guest_id?: string | null
+          target_session_id?: string | null
           target_user_id?: string | null
           title: string
         }
@@ -814,6 +855,7 @@ export type Database = {
           link_label?: string | null
           link_url?: string | null
           target_guest_id?: string | null
+          target_session_id?: string | null
           target_user_id?: string | null
           title?: string
         }

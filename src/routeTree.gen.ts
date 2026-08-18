@@ -31,6 +31,7 @@ import { Route as PetsRouteImport } from './routes/pets'
 import { Route as ProRouteImport } from './routes/pro'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SecurityRouteImport } from './routes/security'
+import { Route as SeismicRouteImport } from './routes/seismic'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SkyEventsRouteImport } from './routes/sky-events'
 import { Route as SkymapRouteImport } from './routes/skymap'
@@ -157,6 +158,11 @@ const SecurityRoute = SecurityRouteImport.update({
   path: '/security',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SeismicRoute = SeismicRouteImport.update({
+  id: '/seismic',
+  path: '/seismic',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
@@ -261,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/pro': typeof ProRoute
   '/reset-password': typeof ResetPasswordRoute
   '/security': typeof SecurityRoute
+  '/seismic': typeof SeismicRoute
   '/services': typeof ServicesRoute
   '/sky-events': typeof SkyEventsRoute
   '/skymap': typeof SkymapRoute
@@ -300,6 +307,7 @@ export interface FileRoutesByTo {
   '/pro': typeof ProRoute
   '/reset-password': typeof ResetPasswordRoute
   '/security': typeof SecurityRoute
+  '/seismic': typeof SeismicRoute
   '/services': typeof ServicesRoute
   '/sky-events': typeof SkyEventsRoute
   '/skymap': typeof SkymapRoute
@@ -341,6 +349,7 @@ export interface FileRoutesById {
   '/pro': typeof ProRoute
   '/reset-password': typeof ResetPasswordRoute
   '/security': typeof SecurityRoute
+  '/seismic': typeof SeismicRoute
   '/services': typeof ServicesRoute
   '/sky-events': typeof SkyEventsRoute
   '/skymap': typeof SkymapRoute
@@ -382,6 +391,7 @@ export interface FileRouteTypes {
     | '/pro'
     | '/reset-password'
     | '/security'
+    | '/seismic'
     | '/services'
     | '/sky-events'
     | '/skymap'
@@ -421,6 +431,7 @@ export interface FileRouteTypes {
     | '/pro'
     | '/reset-password'
     | '/security'
+    | '/seismic'
     | '/services'
     | '/sky-events'
     | '/skymap'
@@ -461,6 +472,7 @@ export interface FileRouteTypes {
     | '/pro'
     | '/reset-password'
     | '/security'
+    | '/seismic'
     | '/services'
     | '/sky-events'
     | '/skymap'
@@ -502,6 +514,7 @@ export interface RootRouteChildren {
   ProRoute: typeof ProRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SecurityRoute: typeof SecurityRoute
+  SeismicRoute: typeof SeismicRoute
   ServicesRoute: typeof ServicesRoute
   SkyEventsRoute: typeof SkyEventsRoute
   SkymapRoute: typeof SkymapRoute
@@ -673,6 +686,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SecurityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/seismic': {
+      id: '/seismic'
+      path: '/seismic'
+      fullPath: '/seismic'
+      preLoaderRoute: typeof SeismicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/services': {
       id: '/services'
       path: '/services'
@@ -826,6 +846,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProRoute: ProRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SecurityRoute: SecurityRoute,
+  SeismicRoute: SeismicRoute,
   ServicesRoute: ServicesRoute,
   SkyEventsRoute: SkyEventsRoute,
   SkymapRoute: SkymapRoute,

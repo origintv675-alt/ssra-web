@@ -923,3 +923,194 @@ html.is-ruined img:not(.tormentor-ruin-face):not(.tormentor-skull) {
     opacity: 0;
   }
 }
+
+/* ---------- Tormentor: the face must win the frame after the shove ---------- */
+.tormentor-face,
+.tormentor-face.is-anchored {
+  z-index: 4;
+}
+
+.tormentor-hand,
+.tormentor-hand.is-anchored {
+  z-index: 2;
+}
+
+.tormentor-hand.is-receding {
+  opacity: 0.45;
+  filter: blur(3px) drop-shadow(0 0 30px oklch(0 0 0 / 90%));
+  transition: opacity 1.2s ease, filter 1.2s ease;
+}
+
+/* ---------- Tormentor: face-only stalker ---------- */
+.tormentor-stalk {
+  position: fixed;
+  inset: 0;
+  z-index: 190;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.tormentor-stalk-face {
+  position: absolute;
+  translate: -50% -50%;
+  transition: left 2.8s cubic-bezier(0.2, 0.8, 0.2, 1), top 2.8s cubic-bezier(0.2, 0.8, 0.2, 1),
+    width 2.5s ease, opacity 2.5s ease;
+  filter: drop-shadow(0 0 60px oklch(0 0 0));
+  mix-blend-mode: screen;
+}
+
+/* ---------- Tormentor: the punishment ---------- */
+.tormentor-punish {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: grid;
+  place-content: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  text-align: center;
+  background: oklch(0.02 0 0 / 92%);
+  backdrop-filter: blur(6px);
+}
+
+.tormentor-punish.is-black {
+  background: oklch(0 0 0);
+  backdrop-filter: none;
+}
+
+.tormentor-punish-card {
+  max-width: 26rem;
+  border-radius: 1rem;
+  border: 1px solid oklch(0.4 0.02 250 / 45%);
+  background: oklch(0.14 0.02 250);
+  padding: 1.75rem;
+}
+
+.tormentor-punish-kicker {
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: oklch(0.7 0.12 250);
+}
+
+.tormentor-punish-title {
+  margin-top: 0.6rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: oklch(0.95 0.01 250);
+}
+
+.tormentor-punish-note {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: oklch(0.72 0.02 250);
+}
+
+.tormentor-punish-button {
+  margin-top: 1.25rem;
+  border-radius: 0.6rem;
+  border: 1px solid oklch(0.5 0.18 27 / 60%);
+  background: oklch(0.28 0.14 27);
+  padding: 0.6rem 1.4rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: oklch(0.97 0.01 20);
+}
+
+.tormentor-punish-line {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 5.5vw, 3rem);
+  line-height: 1.25;
+  color: oklch(0.92 0.02 20);
+  animation: tormentor-punish-in 1.1s ease-out both;
+  max-width: 48rem;
+}
+
+.tormentor-punish-line.is-final {
+  color: oklch(0.55 0.24 27);
+  letter-spacing: 0.3em;
+}
+
+.tormentor-punish-block {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  animation: tormentor-punish-in 1s ease-out both;
+}
+
+.tormentor-punish-fact {
+  font-family: ui-monospace, "SFMono-Regular", monospace;
+  font-size: clamp(0.95rem, 3.5vw, 1.6rem);
+  letter-spacing: 0.14em;
+  color: oklch(0.6 0.22 27);
+  word-break: break-all;
+}
+
+.tormentor-punish-map {
+  width: min(90vw, 34rem);
+  height: min(45vh, 18rem);
+  border: 1px solid oklch(0.45 0.2 27 / 60%);
+  border-radius: 0.75rem;
+  filter: saturate(0.6) contrast(1.15);
+}
+
+.tormentor-punish-input {
+  width: min(90vw, 34rem);
+  min-height: 6rem;
+  border-radius: 0.6rem;
+  border: 1px solid oklch(0.4 0.1 27 / 60%);
+  background: oklch(0.08 0.01 20);
+  padding: 0.75rem;
+  color: oklch(0.95 0.01 20);
+}
+
+@keyframes tormentor-punish-in {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+    transform: scale(1.06);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+/* ---------- Ghosts of past confessions, flickering through the lobby ---------- */
+.ghost-echo {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 30;
+  pointer-events: none;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: clamp(0.9rem, 3vw, 1.4rem);
+  letter-spacing: 0.16em;
+  color: oklch(0.75 0.06 250 / 55%);
+  text-shadow: 0 0 24px oklch(0.6 0.1 250 / 60%);
+  animation: ghost-echo-flicker 5.5s ease-in-out both;
+}
+
+@keyframes ghost-echo-flicker {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  12% {
+    opacity: 0.85;
+  }
+  18% {
+    opacity: 0.1;
+  }
+  28% {
+    opacity: 0.75;
+  }
+  70% {
+    opacity: 0.5;
+    transform: translateY(-14px) scale(1.02);
+  }
+}

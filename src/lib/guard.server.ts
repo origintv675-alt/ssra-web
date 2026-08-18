@@ -101,7 +101,9 @@ export async function guardState(input: GuardInput): Promise<GuardState> {
       : Promise.resolve({ data: null }),
     supabase
       .from("site_popups")
-      .select("id, title, body, link_url, link_label, expires_at, target_user_id, target_guest_id")
+      .select(
+        "id, title, body, link_url, link_label, expires_at, target_user_id, target_guest_id, target_session_id",
+      )
       .eq("active", true)
       .order("created_at", { ascending: false })
       .limit(20),
@@ -140,13 +142,21 @@ export async function guardState(input: GuardInput): Promise<GuardState> {
     expires_at: string | null;
     target_user_id: string | null;
     target_guest_id: string | null;
+    target_session_id: string | null;
   }[])
     .filter((p) => !p.expires_at || new Date(p.expires_at).getTime() > now)
     .filter((p) => {
-      if (!p.target_user_id && !p.target_guest_id) return true;
-      return p.target_user_id === input.userId || p.target_guest_id === input.guestId;
+      if (!p.target_user_id && !p.target_guest_id && !p.target_session_id) return true;
+      if (p.target_session_id && p.target_session_id === input.sessionId) return true;
+      return (
+        (Boolean(p.target_user_id) && p.target_user_id === input.userId) ||
+        (Boolean(p.target_guest_id) && p.target_guest_id === input.guestId)
+      );
     })
-    .map(({ target_user_id: _user, target_guest_id: _guest, ...popup }) => popup);
+    .map(
+      ({ target_user_id: _user, target_guest_id: _guest, target_session_id: _session, ...popup }) =>
+        popup,
+    );
 
   const kickedAt = guest?.kicked_at ?? member?.kicked_at ?? null;
 

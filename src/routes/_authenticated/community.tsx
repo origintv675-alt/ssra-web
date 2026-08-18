@@ -1,3 +1,4 @@
+import { GhostEchoes } from "@/components/GhostEchoes";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { BadgeCheck, ImagePlus, Search, Send, Sparkles, Users } from "lucide-react";
@@ -179,6 +180,7 @@ function CommunityPage() {
 
   return (
     <div className="relative z-10 mx-auto max-w-6xl px-4 pb-16 pt-32">
+      <GhostEchoes />
       <p className="font-display text-xs uppercase tracking-[0.35em] text-primary">Community</p>
       <h1 className="mt-4 text-4xl font-bold">
         Member <span className="neon-text">chat</span>
