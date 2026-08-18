@@ -1,6 +1,6 @@
 import { adminClient } from "@/lib/admin.server";
 
-export type HauntStage = "armed" | "running" | "offline" | "ruined" | "banned";
+export type HauntStage = "armed" | "running" | "offline" | "ruined" | "banned" | "peek" | "peeked";
 
 export type HauntState = {
   id: string;
@@ -21,9 +21,10 @@ type HauntRow = {
 };
 
 const STAGES: HauntStage[] = ["armed", "running", "offline", "ruined", "banned"];
+const ALL_STAGES: HauntStage[] = [...STAGES, "peek", "peeked"];
 
 export function isHauntStage(value: string): value is HauntStage {
-  return (STAGES as string[]).includes(value);
+  return (ALL_STAGES as string[]).includes(value);
 }
 
 type Who = {
@@ -62,8 +63,11 @@ export async function hauntFor(who: Who): Promise<HauntState | null> {
     return false;
   });
 
-  const row = rows[0];
+  const row = rows.find((r) => r.stage !== "peeked") ?? null;
   if (!row) return null;
+
+  // A one-time warning peek never pins an origin or ruins anything.
+  if (row.stage === "peek") return { id: row.id, stage: "peek", originPath: row.origin_path };
 
   // First sighting pins the hiding spot they will eventually be dragged back to.
   if (!row.origin_path) {
@@ -102,6 +106,13 @@ export async function advanceHaunt(id: string, stage: HauntStage): Promise<void>
   const { data } = await supabase.from("haunts").select("stage").eq("id", id).maybeSingle();
   const current = (data as { stage?: string } | null)?.stage ?? "armed";
   const from = isHauntStage(current) ? current : "armed";
+  // The warning peek is its own tiny track: peek -> peeked and nothing else.
+  if (from === "peek" || stage === "peeked") {
+    if (from === "peek" && stage === "peeked") {
+      await supabase.from("haunts").update({ stage: "peeked" }).eq("id", id);
+    }
+    return;
+  }
   if (STAGES.indexOf(stage) <= STAGES.indexOf(from)) return;
   if (stage === "banned") return;
   await supabase

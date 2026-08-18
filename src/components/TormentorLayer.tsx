@@ -6,7 +6,7 @@ import handAsset from "@/assets/tormentor-hand.png.asset.json";
 import { useGuard } from "@/lib/guard";
 import { hauntAdvance } from "@/lib/haunt.functions";
 
-type Phase = "idle" | "run" | "hand" | "face" | "offline";
+type Phase = "idle" | "run" | "hand" | "face" | "offline" | "watch";
 
 // A full 25 seconds of running before anything touches them, with the site
 // still usable so they can actually pick a hiding page.
@@ -115,6 +115,45 @@ function RuinedWorld() {
 }
 
 
+type Victim = { top: number; left: number; width: number; height: number; side: "left" | "right" };
+
+/**
+ * Finds the biggest piece of interface closest to where the visitor is looking —
+ * that is the thing the hand shoves when they think they are hidden.
+ */
+function findVictim(): Victim | null {
+  const nodes = Array.from(
+    document.querySelectorAll<HTMLElement>(
+      ".glass-panel, .glass-soft, article, section, .card, img, h1, [data-tormentor-target]",
+    ),
+  );
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  let best: { node: HTMLElement; rect: DOMRect; score: number } | null = null;
+
+  for (const node of nodes) {
+    const rect = node.getBoundingClientRect();
+    if (rect.width < 120 || rect.height < 80) continue;
+    if (rect.bottom < 40 || rect.top > window.innerHeight - 40) continue;
+    const dx = rect.left + rect.width / 2 - cx;
+    const dy = rect.top + rect.height / 2 - cy;
+    const distance = Math.hypot(dx, dy);
+    const score = distance - Math.sqrt(rect.width * rect.height) * 0.35;
+    if (!best || score < best.score) best = { node, rect, score };
+  }
+
+  if (!best) return null;
+  best.node.classList.add("tormentor-shoved");
+  const { rect } = best;
+  return {
+    top: rect.top,
+    left: rect.left,
+    width: rect.width,
+    height: rect.height,
+    side: rect.left + rect.width / 2 > cx ? "left" : "right",
+  };
+}
+
 /**
  * The tormentor. Plays the chase, the strike, the peek and the forced shutdown
  * for one targeted visitor, then leaves their world permanently ruined.
@@ -127,8 +166,25 @@ export function TormentorLayer() {
 
   const [phase, setPhase] = useState<Phase>("idle");
   const [distance, setDistance] = useState(500);
+  const [victim, setVictim] = useState<Victim | null>(null);
   const playing = useRef(false);
+  const peeked = useRef(false);
   const timers = useRef<number[]>([]);
+
+  // A single silent warning for token tampering: it leans in from the edge of
+  // the page, watches, and is gone again.
+  useEffect(() => {
+    if (stage !== "peek" || peeked.current || !haunt) return;
+    peeked.current = true;
+    const id = haunt.id;
+    setPhase("watch");
+    timers.current.push(
+      window.setTimeout(() => {
+        setPhase("idle");
+        void advance({ data: { id, stage: "peeked" } }).catch(() => {});
+      }, 6_000),
+    );
+  }, [stage, haunt?.id]);
 
   // Timers live in a ref so the poll advancing the stage mid-sequence can never
   // cancel the chase half way through.
@@ -153,7 +209,10 @@ export function TormentorLayer() {
     }, 60);
 
     timers.current.push(
-      window.setTimeout(() => setPhase("hand"), HAND_MS),
+      window.setTimeout(() => {
+        setVictim(findVictim());
+        setPhase("hand");
+      }, HAND_MS),
       window.setTimeout(() => setPhase("face"), FACE_MS),
       window.setTimeout(() => {
         setPhase("offline");
@@ -181,8 +240,27 @@ export function TormentorLayer() {
   if (stage === "ruined") return <RuinedWorld />;
   if (phase === "idle") return null;
 
+  // The silent warning: it leans in from the edge of the page, then is gone.
+  if (phase === "watch") {
+    return (
+      <div className="tormentor-stage is-watch" aria-hidden>
+        <img src={faceAsset.url} alt="" className="tormentor-watch-face" />
+      </div>
+    );
+  }
+
+  // The hand and the head are pinned to whatever the visitor was hiding behind.
+  const anchor: React.CSSProperties | undefined = victim
+    ? ({
+        "--vx": `${victim.left}px`,
+        "--vy": `${victim.top}px`,
+        "--vw": `${victim.width}px`,
+        "--vh": `${victim.height}px`,
+      } as React.CSSProperties)
+    : undefined;
+
   return (
-    <div className={`tormentor-stage${phase === "run" ? " is-chase" : ""}`} aria-hidden>
+    <div className={`tormentor-stage${phase === "run" ? " is-chase" : ""}`} style={anchor} aria-hidden>
       {phase !== "offline" && (
         <>
           <div className="tormentor-dark" />
@@ -196,12 +274,26 @@ export function TormentorLayer() {
 
       {(phase === "hand" || phase === "face") && (
         <>
-          <img src={handAsset.url} alt="" className="tormentor-hand" />
+          <img
+            src={handAsset.url}
+            alt=""
+            className={victim ? "tormentor-hand is-anchored" : "tormentor-hand"}
+          />
           <Cracks />
         </>
       )}
 
-      {phase === "face" && <img src={faceAsset.url} alt="" className="tormentor-face" />}
+      {phase === "face" && (
+        <img
+          src={faceAsset.url}
+          alt=""
+          className={
+            victim
+              ? `tormentor-face is-anchored from-${victim.side}`
+              : "tormentor-face"
+          }
+        />
+      )}
 
       {phase === "offline" && (
         <div className="tormentor-offline">

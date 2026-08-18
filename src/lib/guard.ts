@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 
 import { setSiteDisplay } from "@/lib/display";
+import { isSkyMode } from "@/lib/timeOfDay";
 import { sessionGuard } from "@/lib/guard.functions";
 import { useIdentity } from "@/lib/identity";
 
@@ -63,10 +64,9 @@ export function useGuard() {
   useEffect(() => {
     if (!state) return;
     const override = state.skyOverride;
-    setSiteDisplay({
-      skyOverride: override === "day" || override === "dusk" || override === "night" ? override : null,
-      animations: state.animationsEnabled !== false,
-    });
+    const animations = state.animationsEnabled !== false;
+    setSiteDisplay({ skyOverride: isSkyMode(override) ? override : null, animations });
+    document.documentElement.classList.toggle("no-motion", !animations);
   }, [state]);
 
   const lock = state?.locks.find((l) => l.path === path) ?? null;
