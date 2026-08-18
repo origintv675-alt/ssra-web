@@ -27,6 +27,8 @@ export type GuardState = {
   guestBanReason: string | null;
   memberBanned: boolean;
   memberBanReason: string | null;
+  /** When a timed punishment lifts itself, if one is running. */
+  banUntil: string | null;
   skyOverride: string | null;
   animationsEnabled: boolean;
   haunt: HauntState | null;
@@ -78,7 +80,7 @@ export async function guardState(input: GuardInput): Promise<GuardState> {
 
   const [banRow, lockRows, settings, guestRow, memberRow, popupRows] = await Promise.all([
     ip
-      ? supabase.from("banned_ips").select("ip, reason").eq("ip", ip).maybeSingle()
+      ? supabase.from("banned_ips").select("ip, reason, expires_at").eq("ip", ip).maybeSingle()
       : Promise.resolve({ data: null }),
     supabase.from("page_locks").select("id, path, message, expires_at, target_user_id, target_guest_id"),
     supabase
@@ -88,14 +90,14 @@ export async function guardState(input: GuardInput): Promise<GuardState> {
     input.guestId
       ? supabase
           .from("guests")
-          .select("banned, ban_reason, kicked_at")
+          .select("banned, ban_reason, kicked_at, banned_until")
           .eq("id", input.guestId)
           .maybeSingle()
       : Promise.resolve({ data: null }),
     input.userId
       ? supabase
           .from("profiles")
-          .select("banned, ban_reason, kicked_at")
+          .select("banned, ban_reason, kicked_at, banned_until")
           .eq("id", input.userId)
           .maybeSingle()
       : Promise.resolve({ data: null }),
@@ -109,10 +111,45 @@ export async function guardState(input: GuardInput): Promise<GuardState> {
       .limit(20),
   ]);
 
-  const ban = banRow.data as { ip: string; reason: string | null } | null;
-  const guest = guestRow.data as { banned: boolean; ban_reason: string | null; kicked_at: string | null } | null;
-  const member = memberRow.data as { banned: boolean; ban_reason: string | null; kicked_at: string | null } | null;
+  type BanRow = { banned: boolean; ban_reason: string | null; kicked_at: string | null; banned_until: string | null };
+  const ban = banRow.data as { ip: string; reason: string | null; expires_at: string | null } | null;
+  const guest = guestRow.data as BanRow | null;
+  const member = memberRow.data as BanRow | null;
   const now = Date.now();
+
+  // Timed punishments lift themselves the moment they run out.
+  const expired = (until: string | null | undefined) =>
+    Boolean(until) && new Date(until as string).getTime() <= now;
+
+  let ipBanned = Boolean(ban);
+  if (ban && expired(ban.expires_at)) {
+    ipBanned = false;
+    await supabase.from("banned_ips").delete().eq("ip", ban.ip);
+  }
+
+  let guestBanned = Boolean(guest?.banned);
+  if (guest?.banned && expired(guest.banned_until) && input.guestId) {
+    guestBanned = false;
+    await supabase
+      .from("guests")
+      .update({ banned: false, ban_reason: null, banned_until: null })
+      .eq("id", input.guestId);
+  }
+
+  let memberBanned = Boolean(member?.banned);
+  if (member?.banned && expired(member.banned_until) && input.userId) {
+    memberBanned = false;
+    await supabase
+      .from("profiles")
+      .update({ banned: false, ban_reason: null, banned_until: null })
+      .eq("id", input.userId);
+  }
+
+  const banUntil =
+    (guestBanned ? guest?.banned_until : null) ??
+    (memberBanned ? member?.banned_until : null) ??
+    (ipBanned ? ban?.expires_at : null) ??
+    null;
   const allLocks = (lockRows.data ?? []) as {
     path: string;
     message: string | null;
@@ -170,16 +207,17 @@ export async function guardState(input: GuardInput): Promise<GuardState> {
 
   return {
     ip,
-    ipBanned: Boolean(ban),
+    ipBanned,
     ipReason: ban?.reason ?? null,
     locks,
     shutdownUntil: settings.data?.shutdown_until ?? null,
     shutdownMessage: settings.data?.shutdown_message ?? null,
     kickedAt,
-    guestBanned: Boolean(guest?.banned),
+    guestBanned,
     guestBanReason: guest?.ban_reason ?? null,
-    memberBanned: Boolean(member?.banned),
+    memberBanned,
     memberBanReason: member?.ban_reason ?? null,
+    banUntil,
     skyOverride: (settings.data as { sky_override?: string | null } | null)?.sky_override ?? null,
     animationsEnabled:
       (settings.data as { animations_enabled?: boolean } | null)?.animations_enabled !== false,
