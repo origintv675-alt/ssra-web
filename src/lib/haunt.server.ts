@@ -1,6 +1,6 @@
 import { adminClient } from "@/lib/admin.server";
 
-export type HauntStage = "armed" | "running" | "offline" | "ruined" | "banned";
+export type HauntStage = "armed" | "running" | "offline" | "ruined" | "banned" | "peek" | "peeked";
 
 export type HauntState = {
   id: string;

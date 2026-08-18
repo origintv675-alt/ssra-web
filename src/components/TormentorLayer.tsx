@@ -6,7 +6,7 @@ import handAsset from "@/assets/tormentor-hand.png.asset.json";
 import { useGuard } from "@/lib/guard";
 import { hauntAdvance } from "@/lib/haunt.functions";
 
-type Phase = "idle" | "run" | "hand" | "face" | "offline";
+type Phase = "idle" | "run" | "hand" | "face" | "offline" | "watch";
 
 // A full 25 seconds of running before anything touches them, with the site
 // still usable so they can actually pick a hiding page.
