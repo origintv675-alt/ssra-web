@@ -124,27 +124,60 @@ function RuinedWorld() {
  */
 function StalkerFace({ id }: { id: string }) {
   const advance = useServerFn(hauntAdvance);
-  const [spot, setSpot] = useState({ x: 0.8, y: 0.25 });
+  const [spot, setSpot] = useState({ x: 0.86, y: 0.2 });
   const [closeness, setCloseness] = useState(0);
   const started = useRef(Date.now());
+  const pointer = useRef({ x: 0.5, y: 0.5 });
+  const place = useRef({ x: 0.86, y: 0.2 });
 
   useEffect(() => {
     const key = "ssra-stalk-start";
+    const spotKey = "ssra-stalk-spot";
     const stored = Number(window.sessionStorage.getItem(key) ?? 0);
     started.current = stored > 0 ? stored : Date.now();
     window.sessionStorage.setItem(key, String(started.current));
 
-    const move = (e: PointerEvent) =>
-      setSpot({ x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight });
+    // It keeps the same corner of the room between pages.
+    const savedSpot = window.sessionStorage.getItem(spotKey);
+    if (savedSpot) {
+      try {
+        const parsed = JSON.parse(savedSpot) as { x: number; y: number };
+        place.current = parsed;
+        setSpot(parsed);
+      } catch {
+        /* ignore a bad note */
+      }
+    }
+
+    const move = (e: PointerEvent) => {
+      pointer.current = { x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight };
+    };
     window.addEventListener("pointermove", move);
 
     const tick = window.setInterval(() => {
-      setCloseness(Math.min(1, (Date.now() - started.current) / STALK_MS));
-    }, 250);
+      const elapsed = Date.now() - started.current;
+      setCloseness(Math.min(1, elapsed / STALK_MS));
+
+      const here = place.current;
+      const dx = pointer.current.x - here.x;
+      const dy = pointer.current.y - here.y;
+      const watched = Math.hypot(dx, dy) < 0.3;
+      // Looked at, it holds perfectly still. Look away and it slides closer.
+      if (!watched) {
+        const next = {
+          x: Math.min(0.94, Math.max(0.06, here.x + dx * 0.06)),
+          y: Math.min(0.9, Math.max(0.08, here.y + dy * 0.05)),
+        };
+        place.current = next;
+        setSpot(next);
+        window.sessionStorage.setItem(spotKey, JSON.stringify(next));
+      }
+    }, 400);
 
     const done = window.setTimeout(
       () => {
         window.sessionStorage.removeItem(key);
+        window.sessionStorage.removeItem(spotKey);
         void advance({ data: { id, stage: "stalked" } })
           .catch(() => {})
           .finally(() => window.location.reload());
@@ -168,12 +201,73 @@ function StalkerFace({ id }: { id: string }) {
         style={{
           left: `${spot.x * 100}%`,
           top: `${spot.y * 100}%`,
-          opacity: 0.25 + closeness * 0.7,
-          width: `${18 + closeness * 45}vw`,
+          opacity: 0.2 + closeness * 0.7,
+          width: `${16 + closeness * 42}vw`,
         }}
       />
     </div>
   );
+}
+
+const WHISPERS = [
+  "you left the light on",
+  "i counted your tabs",
+  "keep scrolling",
+  "i know which page you hid on",
+  "closer now",
+  "don't turn around",
+];
+
+/**
+ * The quieter hauntings: whispers, a colour glitch, crawling hands and a
+ * blackout. Each runs for a while on their screen only, then closes itself.
+ */
+function ShortScare({ id, kind }: { id: string; kind: "whisper" | "glitch" | "crawl" | "blackout" }) {
+  const advance = useServerFn(hauntAdvance);
+  const [line, setLine] = useState(0);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (kind === "glitch") root.classList.add("is-glitched");
+    if (kind === "blackout") root.classList.add("is-blackedout");
+
+    const rotate = window.setInterval(() => setLine((n) => n + 1), 4_200);
+    const finish = window.setTimeout(() => {
+      void advance({ data: { id, stage: `${kind === "whisper" ? "whisper" : kind}ed` as never } }).catch(() => {});
+    }, 30_000);
+
+    return () => {
+      root.classList.remove("is-glitched", "is-blackedout");
+      window.clearInterval(rotate);
+      window.clearTimeout(finish);
+    };
+  }, [id, kind]);
+
+  if (kind === "whisper") {
+    return (
+      <div className="tormentor-whispers" aria-hidden>
+        <p key={line} className="tormentor-whisper">
+          {WHISPERS[line % WHISPERS.length]}
+        </p>
+      </div>
+    );
+  }
+
+  if (kind === "crawl") {
+    return (
+      <div className="tormentor-crawl" aria-hidden>
+        {[0, 1, 2, 3].map((i) => (
+          <img key={i} src={handAsset.url} alt="" className={`tormentor-crawl-hand h${i}`} />
+        ))}
+      </div>
+    );
+  }
+
+  if (kind === "blackout") {
+    return <div className="tormentor-blackout" aria-hidden />;
+  }
+
+  return <div className="tormentor-glitchveil" aria-hidden />;
 }
 
 const PUNISH_LINES = [
@@ -443,6 +537,9 @@ export function TormentorLayer() {
 
   if (haunt && mode === "stalker" && stage === "stalk") return <StalkerFace id={haunt.id} />;
   if (haunt && mode === "punish" && stage === "punish") return <Punishment id={haunt.id} />;
+  if (haunt && (stage === "whisper" || stage === "glitch" || stage === "crawl" || stage === "blackout")) {
+    return <ShortScare id={haunt.id} kind={stage} />;
+  }
 
   if (stage === "ruined") return <RuinedWorld />;
   if (phase === "idle") return null;
