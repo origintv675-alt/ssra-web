@@ -64,7 +64,7 @@ export function useGuard() {
     if (!state) return;
     const override = state.skyOverride;
     setSiteDisplay({
-      skyOverride: override === "day" || override === "dusk" || override === "night" ? override : null,
+      skyOverride: isSkyMode(override) ? override : null,
       animations: state.animationsEnabled !== false,
     });
   }, [state]);
