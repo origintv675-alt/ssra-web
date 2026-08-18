@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 
 import { setSiteDisplay } from "@/lib/display";
+import { isSkyMode } from "@/lib/timeOfDay";
 import { sessionGuard } from "@/lib/guard.functions";
 import { useIdentity } from "@/lib/identity";
 
