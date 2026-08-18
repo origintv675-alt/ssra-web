@@ -121,7 +121,7 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
       <section className="glass-panel p-5">
         <h2 className="text-lg font-semibold">Sky and motion</h2>
         <div className="mt-3 flex flex-wrap gap-2">
-          {[null, "day", "dusk", "night"].map((sky) => (
+          {[null, "day", "dusk", "night", "midnight"].map((sky) => (
             <Button key={sky ?? "auto"} size="sm" variant={display.data?.sky_override === sky ? "default" : "secondary"} onClick={() => void act("set_display", { sky_override: sky ?? "" }, `${sky ?? "Automatic"} sky selected.`)}>
               {sky ?? "Automatic"}
             </Button>

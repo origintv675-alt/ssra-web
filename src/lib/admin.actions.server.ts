@@ -130,7 +130,7 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
         animations_enabled?: boolean;
       } = { updated_at: new Date().toISOString() };
       if ("sky_override" in payload) {
-        update.sky_override = ["day", "dusk", "night"].includes(sky) ? sky : null;
+        update.sky_override = ["day", "dusk", "night", "midnight"].includes(sky) ? sky : null;
       }
       if ("animations_enabled" in payload) update.animations_enabled = bool(payload["animations_enabled"]);
       const { error } = await supabase.from("site_settings").update(update).eq("id", true);
