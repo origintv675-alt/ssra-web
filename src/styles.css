@@ -278,6 +278,84 @@ html[data-sky="night"] body::before {
     radial-gradient(90% 60% at 80% 110%, oklch(0.4 0.16 155 / 22%), transparent 65%);
 }
 
+/* Midnight: the galactic core rolls overhead, dust lane and all. */
+html[data-sky="midnight"] {
+  --background: oklch(0.09 0.05 285);
+  --card: oklch(0.16 0.06 285 / 62%);
+}
+
+html[data-sky="midnight"] body::before {
+  background:
+    radial-gradient(70% 40% at 18% 12%, oklch(0.55 0.2 320 / 40%), transparent 62%),
+    radial-gradient(60% 45% at 84% 26%, oklch(0.5 0.19 240 / 38%), transparent 65%),
+    radial-gradient(90% 55% at 50% 108%, oklch(0.45 0.16 155 / 22%), transparent 70%);
+}
+
+html[data-sky="midnight"] body::after {
+  content: "";
+  position: fixed;
+  inset: -20% -10%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.85;
+  background:
+    radial-gradient(48% 14% at 50% 44%, oklch(0.92 0.05 90 / 30%), transparent 70%),
+    radial-gradient(70% 22% at 50% 45%, oklch(0.62 0.18 300 / 26%), transparent 72%),
+    radial-gradient(96% 34% at 50% 46%, oklch(0.5 0.16 250 / 20%), transparent 76%),
+    radial-gradient(52% 6% at 50% 47%, oklch(0.05 0.02 300 / 65%), transparent 80%);
+  transform: rotate(-14deg);
+  filter: blur(2px);
+  animation: galaxy-drift 90s ease-in-out infinite alternate;
+}
+
+@keyframes galaxy-drift {
+  from {
+    transform: rotate(-16deg) translate3d(-2%, 1%, 0) scale(1.02);
+  }
+  to {
+    transform: rotate(-11deg) translate3d(2%, -1%, 0) scale(1.08);
+  }
+}
+
+/* Dusk: everything slowly vanishes as the light drains away. */
+html[data-sky="dusk"] body::before {
+  background: radial-gradient(120% 90% at 50% -10%, oklch(0.32 0.08 300 / 35%), transparent 64%);
+  animation: dusk-drain 14s ease-in-out infinite alternate;
+}
+
+html[data-sky="dusk"] main,
+html[data-sky="dusk"] header,
+html[data-sky="dusk"] footer {
+  animation: dusk-vanish 16s ease-in-out infinite alternate;
+}
+
+@keyframes dusk-drain {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.35;
+  }
+}
+
+@keyframes dusk-vanish {
+  from {
+    opacity: 1;
+    filter: none;
+  }
+  to {
+    opacity: 0.82;
+    filter: saturate(0.65) brightness(0.88) blur(0.2px);
+  }
+}
+
+html.no-motion[data-sky="dusk"] main,
+html.no-motion[data-sky="dusk"] header,
+html.no-motion[data-sky="dusk"] footer,
+html.no-motion[data-sky="midnight"] body::after {
+  animation: none;
+}
+
 /* ---------- Comet pointer ---------- */
 html.comet-cursor,
 html.comet-cursor body {
