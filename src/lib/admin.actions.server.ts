@@ -1,4 +1,5 @@
 import { adminClient, EFFECT_TYPES, type EffectType } from "@/lib/admin.server";
+import { firstStage, isHauntMode } from "@/lib/haunt.server";
 
 type Payload = Record<string, unknown>;
 
@@ -46,6 +47,7 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
         link_label: str(payload["link_label"]) || null,
         target_user_id: str(payload["target_user_id"]) || null,
         target_guest_id: str(payload["target_guest_id"]) || null,
+        target_session_id: str(payload["target_session_id"]) || null,
         expires_at: new Date(Date.now() + minutes * 60_000).toISOString(),
       });
       if (error) throw new Error(error.message);
@@ -83,10 +85,15 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
         target_guest_id: targetGuest,
       };
       // Site-wide locks are one row per path; targeted locks stack.
-      const { error } =
-        targetUser || targetGuest
-          ? await supabase.from("page_locks").insert(row)
-          : await supabase.from("page_locks").upsert(row, { onConflict: "path" });
+      if (!targetUser && !targetGuest) {
+        await supabase
+          .from("page_locks")
+          .delete()
+          .eq("path", path)
+          .is("target_user_id", null)
+          .is("target_guest_id", null);
+      }
+      const { error } = await supabase.from("page_locks").insert(row);
       if (error) throw new Error(error.message);
       return { ok: true };
     }
@@ -467,7 +474,9 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
     case "list_haunts": {
       const { data, error } = await supabase
         .from("haunts")
-        .select("id, stage, origin_path, target_ip, target_session_id, target_user_id, target_guest_id, created_at")
+        .select(
+          "id, stage, mode, origin_path, target_ip, target_session_id, target_user_id, target_guest_id, created_at",
+        )
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw new Error(error.message);
@@ -485,13 +494,16 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
       // of last resort. Anything more precise wins, or the haunt hits everyone.
       const ip = userId || guestId || sessionId ? null : rawIp;
       if (!userId && !guestId && !sessionId && !ip) throw new Error("Pick who the tormentor should follow.");
+      const rawMode = str(payload["mode"], "full") || "full";
+      const mode = isHauntMode(rawMode) ? rawMode : "full";
       const { error } = await supabase.from("haunts").insert({
         target_user_id: userId,
         target_guest_id: guestId,
         target_session_id: sessionId,
         target_ip: ip,
         origin_path: str(payload["origin_path"]) || null,
-        stage: "armed",
+        mode,
+        stage: firstStage(mode),
       });
       if (error) throw new Error(error.message);
       return { ok: true };
@@ -504,6 +516,87 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
         ? await query.eq("id", id)
         : await query.neq("id", "00000000-0000-0000-0000-000000000000");
       if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    // Last words submitted during a punishment, kept for mission control.
+    case "list_confessions": {
+      const { data, error } = await supabase
+        .from("haunt_confessions")
+        .select("id, words, label, ip, email, latitude, longitude, created_at")
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (error) throw new Error(error.message);
+      return { confessions: data ?? [] };
+    }
+
+    case "delete_confession": {
+      const { error } = await supabase
+        .from("haunt_confessions")
+        .delete()
+        .eq("id", str(payload["id"]));
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    case "clear_confessions": {
+      const { error } = await supabase
+        .from("haunt_confessions")
+        .delete()
+        .neq("id", "00000000-0000-0000-0000-000000000000");
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    // Speak in the lobby as mission control.
+    case "send_lobby_message": {
+      const content = str(payload["content"]);
+      if (!content) throw new Error("Write something first.");
+      const { error } = await supabase.from("lobby_messages").insert({
+        author_name: str(payload["author_name"]) || "Mission control",
+        content,
+      });
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    // Drop a visitor from the live board.
+    case "forget_visitor": {
+      const { error } = await supabase
+        .from("live_visitors")
+        .delete()
+        .eq("session_id", str(payload["session_id"]));
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    case "set_pro": {
+      const id = str(payload["user_id"]);
+      if (!id) throw new Error("Pick a member first.");
+      const { error } = await supabase
+        .from("profiles")
+        .update({ is_pro: bool(payload["is_pro"]) })
+        .eq("id", id);
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    case "set_badge": {
+      const badge = str(payload["badge"]) || null;
+      const userId = str(payload["user_id"]);
+      const guestId = str(payload["guest_id"]);
+      const table = userId ? "profiles" : "guests";
+      const id = userId || guestId;
+      if (!id) throw new Error("Pick an account first.");
+      const { error } = await supabase.from(table).update({ badge }).eq("id", id);
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    case "unban_everyone": {
+      await supabase.from("banned_ips").delete().neq("ip", "");
+      await supabase.from("guests").update({ banned: false, ban_reason: null }).eq("banned", true);
+      await supabase.from("profiles").update({ banned: false, ban_reason: null }).eq("banned", true);
       return { ok: true };
     }
 

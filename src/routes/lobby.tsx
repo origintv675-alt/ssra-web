@@ -4,6 +4,7 @@ import { MessagesSquare, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
+import { GhostEchoes } from "@/components/GhostEchoes";
 import { Reveal } from "@/components/Reveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,6 +70,7 @@ function Lobby() {
 
   return (
     <div className="relative z-10 mx-auto max-w-3xl px-4 pb-24 pt-28 sm:pt-32">
+      <GhostEchoes />
       <Reveal>
         <span className="glass-soft inline-flex items-center gap-2 px-4 py-1.5 font-display text-[11px] uppercase tracking-[0.35em] text-primary">
           <MessagesSquare className="h-3.5 w-3.5" /> Open lobby
