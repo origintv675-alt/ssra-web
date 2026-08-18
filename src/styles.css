@@ -1114,3 +1114,104 @@ html.is-ruined img:not(.tormentor-ruin-face):not(.tormentor-skull) {
     transform: translateY(-14px) scale(1.02);
   }
 }
+
+/* ---- The quieter hauntings ------------------------------------------- */
+
+.tormentor-whispers {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+}
+
+.tormentor-whisper {
+  font-size: clamp(1.2rem, 5vw, 3rem);
+  letter-spacing: 0.28em;
+  text-transform: lowercase;
+  color: oklch(0.75 0.02 20 / 0.55);
+  text-shadow: 0 0 28px oklch(0.4 0.18 25 / 0.6);
+  animation: whisper-fade 4.2s ease-in-out;
+}
+
+@keyframes whisper-fade {
+  0%, 100% { opacity: 0; transform: translateY(14px) scale(0.98); }
+  35%, 65% { opacity: 1; transform: none; }
+}
+
+.tormentor-crawl {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.tormentor-crawl-hand {
+  position: absolute;
+  width: 34vw;
+  max-width: 420px;
+  filter: brightness(0.2) contrast(1.4);
+  opacity: 0.85;
+}
+
+.tormentor-crawl-hand.h0 { left: -8vw; bottom: -6vh; animation: crawl-in 9s ease-in-out infinite; }
+.tormentor-crawl-hand.h1 { right: -10vw; bottom: -8vh; transform: scaleX(-1); animation: crawl-in 11s ease-in-out 1.5s infinite; }
+.tormentor-crawl-hand.h2 { left: -12vw; top: -10vh; transform: rotate(180deg); animation: crawl-in 13s ease-in-out 3s infinite; }
+.tormentor-crawl-hand.h3 { right: -12vw; top: -8vh; transform: rotate(180deg) scaleX(-1); animation: crawl-in 10s ease-in-out 4.5s infinite; }
+
+@keyframes crawl-in {
+  0%, 100% { opacity: 0; }
+  25% { opacity: 0.9; }
+  50% { opacity: 0.9; translate: 7vw -4vh; }
+  75% { opacity: 0.35; }
+}
+
+.tormentor-blackout {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 45%, transparent 4%, oklch(0.02 0 0 / 0.97) 26%);
+  animation: blackout-breathe 6s ease-in-out infinite;
+}
+
+@keyframes blackout-breathe {
+  0%, 100% { opacity: 0.94; }
+  50% { opacity: 1; }
+}
+
+html.is-blackedout body { filter: brightness(0.35); }
+
+.tormentor-glitchveil {
+  position: fixed;
+  inset: 0;
+  z-index: 92;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  background: repeating-linear-gradient(
+    0deg,
+    oklch(0.5 0.2 25 / 0.28) 0 2px,
+    transparent 2px 6px
+  );
+  animation: glitch-veil 0.7s steps(3) infinite;
+}
+
+@keyframes glitch-veil {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(4px); }
+}
+
+html.is-glitched body {
+  animation: glitch-shift 2.6s steps(6) infinite;
+}
+
+@keyframes glitch-shift {
+  0%, 100% { filter: none; }
+  20% { filter: invert(1) hue-rotate(90deg); }
+  40% { filter: none; transform: translateX(3px); }
+  60% { filter: invert(1); }
+  80% { filter: hue-rotate(200deg) saturate(2); transform: translateX(-3px); }
+}
