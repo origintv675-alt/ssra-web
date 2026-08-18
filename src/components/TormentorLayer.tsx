@@ -274,12 +274,26 @@ export function TormentorLayer() {
 
       {(phase === "hand" || phase === "face") && (
         <>
-          <img src={handAsset.url} alt="" className="tormentor-hand" />
+          <img
+            src={handAsset.url}
+            alt=""
+            className={victim ? "tormentor-hand is-anchored" : "tormentor-hand"}
+          />
           <Cracks />
         </>
       )}
 
-      {phase === "face" && <img src={faceAsset.url} alt="" className="tormentor-face" />}
+      {phase === "face" && (
+        <img
+          src={faceAsset.url}
+          alt=""
+          className={
+            victim
+              ? `tormentor-face is-anchored from-${victim.side}`
+              : "tormentor-face"
+          }
+        />
+      )}
 
       {phase === "offline" && (
         <div className="tormentor-offline">
