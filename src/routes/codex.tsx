@@ -5,6 +5,7 @@ import { Code2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { PetCloud } from "@/components/PetCloud";
 import { ProGate } from "@/components/ProGate";
 import { Reveal } from "@/components/Reveal";
 import {
@@ -58,6 +59,7 @@ function CodexPage() {
           <Codex />
         </ProGate>
       </div>
+      <PetCloud />
     </div>
   );
 }
