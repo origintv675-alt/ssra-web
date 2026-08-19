@@ -21,6 +21,8 @@ export type GuardState = {
   ipReason: string | null;
   locks: PageLock[];
   shutdownUntil: string | null;
+  /** When a scheduled shutdown begins; null means it is already in force. */
+  shutdownFrom: string | null;
   shutdownMessage: string | null;
   kickedAt: string | null;
   guestBanned: boolean;
@@ -85,7 +87,7 @@ export async function guardState(input: GuardInput): Promise<GuardState> {
     supabase.from("page_locks").select("id, path, message, expires_at, target_user_id, target_guest_id"),
     supabase
       .from("site_settings")
-      .select("shutdown_until, shutdown_message, sky_override, animations_enabled")
+      .select("shutdown_until, shutdown_from, shutdown_message, sky_override, animations_enabled")
       .maybeSingle(),
     input.guestId
       ? supabase
@@ -211,6 +213,7 @@ export async function guardState(input: GuardInput): Promise<GuardState> {
     ipReason: ban?.reason ?? null,
     locks,
     shutdownUntil: settings.data?.shutdown_until ?? null,
+    shutdownFrom: (settings.data as { shutdown_from?: string | null } | null)?.shutdown_from ?? null,
     shutdownMessage: settings.data?.shutdown_message ?? null,
     kickedAt,
     guestBanned,
