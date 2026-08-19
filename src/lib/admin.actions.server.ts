@@ -311,19 +311,88 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
 
     case "set_shutdown": {
       const minutes = Math.min(10080, Math.max(0, num(payload["minutes"], 0)));
+      // Optional delay before the shutdown window opens, so it can be booked ahead.
+      const startsIn = Math.min(10080, Math.max(0, num(payload["starts_in_minutes"], 0)));
       if (minutes > 0) requireKey(payload, SHUTDOWN_KEY);
 
+      const startsAt = Date.now() + startsIn * 60_000;
       const { error } = await supabase
         .from("site_settings")
         .update({
-          shutdown_until: minutes > 0 ? new Date(Date.now() + minutes * 60_000).toISOString() : null,
+          shutdown_until: minutes > 0 ? new Date(startsAt + minutes * 60_000).toISOString() : null,
+          shutdown_from: minutes > 0 && startsIn > 0 ? new Date(startsAt).toISOString() : null,
           shutdown_message: str(payload["message"]) || null,
           updated_at: new Date().toISOString(),
-        })
+        } as never)
         .eq("id", true);
       if (error) throw new Error(error.message);
-      return { ok: true, minutes };
+      return { ok: true, minutes, startsIn };
     }
+
+    case "get_shutdown": {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("shutdown_until, shutdown_from, shutdown_message")
+        .maybeSingle();
+      if (error) throw new Error(error.message);
+      return data ?? {};
+    }
+
+    // Same punishment, applied to a whole set of live visitors / guests / members.
+    case "bulk_punish": {
+      const rawBan = str(payload["ban_type"], "kick") || "kick";
+      const banType: BanType = isBanType(rawBan) ? rawBan : "kick";
+      const scope = str(payload["scope"], "visitors");
+      const minutes = Math.min(43_200, Math.max(1, num(payload["minutes"], 60)));
+      const reason = str(payload["reason"]) || "Handed down by mission control.";
+
+      type Target = { userId: string | null; guestId: string | null; ip: string | null };
+      let targets: Target[] = [];
+
+      if (scope === "guests") {
+        const { data } = await supabase.from("guests").select("id, last_ip").limit(500);
+        targets = (data ?? []).map((g) => ({ userId: null, guestId: g.id, ip: g.last_ip ?? null }));
+      } else if (scope === "members") {
+        const { data } = await supabase.from("profiles").select("id").limit(500);
+        targets = (data ?? []).map((m) => ({ userId: m.id, guestId: null, ip: null }));
+      } else {
+        const since = new Date(Date.now() - 5 * 60_000).toISOString();
+        const { data } = await supabase
+          .from("live_visitors")
+          .select("user_id, guest_id, ip")
+          .gte("last_seen_at", since)
+          .limit(500);
+        targets = (data ?? []).map((v) => ({
+          userId: v.user_id ?? null,
+          guestId: v.guest_id ?? null,
+          ip: v.ip ?? null,
+        }));
+      }
+
+      // Optional explicit list from the console selection.
+      const picked = Array.isArray(payload["targets"]) ? (payload["targets"] as Target[]) : null;
+      if (picked && picked.length) {
+        targets = picked.map((t) => ({
+          userId: t.userId ?? null,
+          guestId: t.guestId ?? null,
+          ip: t.ip ?? null,
+        }));
+      }
+
+      targets = targets.filter((t) => t.userId || t.guestId || t.ip);
+      let done = 0;
+      for (const target of targets) {
+        try {
+          await applyPunishment({ banType, reason, minutes, ...target });
+          done += 1;
+        } catch {
+          /* one bad row must not stop the sweep */
+        }
+      }
+      return { ok: true, banType, scope, count: done };
+    }
+
+
 
     case "list_visitors": {
       const since = new Date(Date.now() - 5 * 60_000).toISOString();
