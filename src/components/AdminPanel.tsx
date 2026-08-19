@@ -74,7 +74,8 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
   const [intensity, setIntensity] = useState(3);
   const [duration, setDuration] = useState(14);
   const [popup, setPopup] = useState({ title: "", body: "", link_url: "", link_label: "", minutes: 30 });
-  const [shutdown, setShutdown] = useState({ minutes: 10, message: "", confirm_key: "" });
+  const [shutdown, setShutdown] = useState({ minutes: 10, starts_in_minutes: 0, message: "", confirm_key: "" });
+  const [bulk, setBulk] = useState({ scope: "visitors", ban_type: "kick", minutes: 30, reason: "" });
   const [hauntKey, setHauntKey] = useState("");
   const [hauntMode, setHauntMode] = useState("full");
   const [banType, setBanType] = useState("ip");
@@ -450,15 +451,55 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
           <Input type="number" placeholder="Minutes" value={shutdown.minutes} onChange={(e) => setShutdown({ ...shutdown, minutes: Number(e.target.value) })} />
           <Input placeholder="Message shown to visitors" value={shutdown.message} onChange={(e) => setShutdown({ ...shutdown, message: e.target.value })} />
+          <Input type="number" placeholder="Starts in (minutes, 0 = now)" value={shutdown.starts_in_minutes} onChange={(e) => setShutdown({ ...shutdown, starts_in_minutes: Number(e.target.value) })} />
           <Input type="password" placeholder="Confirmation password" value={shutdown.confirm_key} onChange={(e) => setShutdown({ ...shutdown, confirm_key: e.target.value })} />
-
         </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          {shutdown.starts_in_minutes > 0
+            ? `Scheduled: starts in ${shutdown.starts_in_minutes} min and lasts ${shutdown.minutes} min.`
+            : "Starts immediately."}
+        </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button size="sm" variant="destructive" onClick={() => void act("set_shutdown", shutdown, "Site shutting down.")}>
             Shut down site
           </Button>
           <Button size="sm" variant="secondary" onClick={() => void act("set_shutdown", { minutes: 0 }, "Site back online.")}>
             Bring site back
+          </Button>
+        </div>
+      </section>
+
+      <section className="glass-panel p-5">
+        <h2 className="text-lg font-semibold">Bulk moderation</h2>
+        <p className="mt-1 text-xs text-muted-foreground">Sweep everyone in a group at once — kick, mute, timeout or ban.</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {[
+            { id: "visitors", label: "Live visitors" },
+            { id: "guests", label: "All guests" },
+            { id: "members", label: "All members" },
+          ].map((scope) => (
+            <Button key={scope.id} size="sm" variant={bulk.scope === scope.id ? "default" : "secondary"} onClick={() => setBulk({ ...bulk, scope: scope.id })}>
+              {scope.label}
+            </Button>
+          ))}
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {BAN_CHOICES.filter((choice) => choice.id !== "none").map((choice) => (
+            <Button key={choice.id} size="sm" variant={bulk.ban_type === choice.id ? "default" : "secondary"} onClick={() => setBulk({ ...bulk, ban_type: choice.id })}>
+              {choice.label}
+            </Button>
+          ))}
+        </div>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <Input type="number" placeholder="Minutes (timeouts and mutes)" value={bulk.minutes} onChange={(e) => setBulk({ ...bulk, minutes: Number(e.target.value) })} />
+          <Input placeholder="Reason shown to them" value={bulk.reason} onChange={(e) => setBulk({ ...bulk, reason: e.target.value })} />
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button size="sm" variant="destructive" onClick={() => void act("bulk_punish", bulk, "Bulk action applied.")}>
+            Apply to {bulk.scope}
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => void act("unban_everyone", {}, "Everyone restored.")}>
+            Unban everyone
           </Button>
         </div>
       </section>

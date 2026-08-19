@@ -71,12 +71,14 @@ export function useGuard() {
 
   const lock = state?.locks.find((l) => l.path === path) ?? null;
   const shutdownMs = state?.shutdownUntil ? new Date(state.shutdownUntil).getTime() - Date.now() : 0;
+  // A scheduled shutdown only bites once its start time has passed.
+  const shutdownStarted = !state?.shutdownFrom || new Date(state.shutdownFrom).getTime() <= Date.now();
 
   return {
     ready: mounted && !query.isPending,
     state,
     lock,
-    shutdownActive: shutdownMs > 0,
+    shutdownActive: shutdownMs > 0 && shutdownStarted,
     shutdownMs,
     path,
   };

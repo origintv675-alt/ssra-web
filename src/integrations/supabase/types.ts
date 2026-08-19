@@ -877,6 +877,7 @@ export type Database = {
         Row: {
           animations_enabled: boolean
           id: boolean
+          shutdown_from: string | null
           shutdown_message: string | null
           shutdown_until: string | null
           sky_override: string | null
@@ -885,6 +886,7 @@ export type Database = {
         Insert: {
           animations_enabled?: boolean
           id?: boolean
+          shutdown_from?: string | null
           shutdown_message?: string | null
           shutdown_until?: string | null
           sky_override?: string | null
@@ -893,6 +895,7 @@ export type Database = {
         Update: {
           animations_enabled?: boolean
           id?: boolean
+          shutdown_from?: string | null
           shutdown_message?: string | null
           shutdown_until?: string | null
           sky_override?: string | null
@@ -1028,6 +1031,25 @@ export type Database = {
           id: string
           is_pro: boolean
           username: string
+        }[]
+      }
+      pet_cloud: {
+        Args: { _limit?: number }
+        Returns: {
+          accent_color: string
+          accessory: string
+          aura: string
+          body_color: string
+          created_at: string
+          eyes: string
+          happiness: number
+          id: string
+          name: string
+          owner_name: string
+          pattern: string
+          sparkle_color: string
+          species: string
+          times_petted: number
         }[]
       }
       pet_the_pet: { Args: { _guest_id?: string; _id: string }; Returns: Json }
