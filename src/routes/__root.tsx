@@ -147,6 +147,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <LiquidGlassFilter />
       <DailyAlerts />
       <CosmicScene />
       <StarField />
