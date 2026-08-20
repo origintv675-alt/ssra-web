@@ -15,6 +15,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { StarField } from "@/components/StarField";
 import { CosmicScene } from "@/components/CosmicScene";
+import { LiquidGlassFilter } from "@/components/LiquidGlassFilter";
 import { CometCursor } from "@/components/CometCursor";
 import { IntroSequence } from "@/components/IntroSequence";
 import { Toaster } from "@/components/ui/sonner";
@@ -147,6 +148,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <LiquidGlassFilter />
       <DailyAlerts />
       <CosmicScene />
       <StarField />
