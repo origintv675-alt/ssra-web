@@ -903,6 +903,75 @@ export type Database = {
         }
         Relationships: []
       }
+      site_themes: {
+        Row: {
+          accent: string
+          applied_count: number
+          bg_style: string
+          created_at: string
+          glow: string
+          hero_image_url: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
+          id: string
+          lock_code: string | null
+          lock_enabled: boolean
+          lock_media_type: string
+          lock_media_url: string | null
+          lock_message: string | null
+          owner_guest_id: string | null
+          owner_name: string
+          owner_user_id: string | null
+          shared: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          accent?: string
+          applied_count?: number
+          bg_style?: string
+          created_at?: string
+          glow?: string
+          hero_image_url?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          lock_code?: string | null
+          lock_enabled?: boolean
+          lock_media_type?: string
+          lock_media_url?: string | null
+          lock_message?: string | null
+          owner_guest_id?: string | null
+          owner_name?: string
+          owner_user_id?: string | null
+          shared?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          accent?: string
+          applied_count?: number
+          bg_style?: string
+          created_at?: string
+          glow?: string
+          hero_image_url?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          lock_code?: string | null
+          lock_enabled?: boolean
+          lock_media_type?: string
+          lock_media_url?: string | null
+          lock_message?: string | null
+          owner_guest_id?: string | null
+          owner_name?: string
+          owner_user_id?: string | null
+          shared?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       task_completions: {
         Row: {
           created_at: string
@@ -953,6 +1022,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      bump_theme_applied: { Args: { _id: string }; Returns: undefined }
       complete_daily_task: {
         Args: { _task_id: string; _tokens: number }
         Returns: number
@@ -1033,6 +1103,37 @@ export type Database = {
           username: string
         }[]
       }
+      my_site_theme: {
+        Args: { _guest_id?: string }
+        Returns: {
+          accent: string
+          applied_count: number
+          bg_style: string
+          created_at: string
+          glow: string
+          hero_image_url: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
+          id: string
+          lock_code: string | null
+          lock_enabled: boolean
+          lock_media_type: string
+          lock_media_url: string | null
+          lock_message: string | null
+          owner_guest_id: string | null
+          owner_name: string
+          owner_user_id: string | null
+          shared: boolean
+          title: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "site_themes"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       pet_cloud: {
         Args: { _limit?: number }
         Returns: {
@@ -1059,6 +1160,53 @@ export type Database = {
       }
       redeem_promo_code: { Args: { _code: string }; Returns: Json }
       save_pet: { Args: { _guest_id?: string; _pet: Json }; Returns: Json }
+      save_site_theme: {
+        Args: { _guest_id?: string; _theme: Json }
+        Returns: {
+          accent: string
+          applied_count: number
+          bg_style: string
+          created_at: string
+          glow: string
+          hero_image_url: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
+          id: string
+          lock_code: string | null
+          lock_enabled: boolean
+          lock_media_type: string
+          lock_media_url: string | null
+          lock_message: string | null
+          owner_guest_id: string | null
+          owner_name: string
+          owner_user_id: string | null
+          shared: boolean
+          title: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "site_themes"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      theme_cloud: {
+        Args: { _limit?: number }
+        Returns: {
+          accent: string
+          applied_count: number
+          bg_style: string
+          glow: string
+          hero_image_url: string
+          hero_subtitle: string
+          hero_title: string
+          id: string
+          owner_name: string
+          title: string
+          updated_at: string
+        }[]
+      }
       track_visitor: {
         Args: {
           _guest_id?: string
