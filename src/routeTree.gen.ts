@@ -22,6 +22,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as DonateRouteImport } from './routes/donate'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as GamesRouteImport } from './routes/games'
 import { Route as ImagineRouteImport } from './routes/imagine'
@@ -114,6 +115,11 @@ const DonateRoute = DonateRouteImport.update({
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeaturesRoute = FeaturesRouteImport.update({
+  id: '/features',
+  path: '/features',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleryRoute = GalleryRouteImport.update({
@@ -276,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/donate': typeof DonateRoute
   '/events': typeof EventsRoute
+  '/features': typeof FeaturesRoute
   '/gallery': typeof GalleryRoute
   '/games': typeof GamesRoute
   '/imagine': typeof ImagineRoute
@@ -319,6 +326,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/donate': typeof DonateRoute
   '/events': typeof EventsRoute
+  '/features': typeof FeaturesRoute
   '/gallery': typeof GalleryRoute
   '/games': typeof GamesRoute
   '/imagine': typeof ImagineRoute
@@ -364,6 +372,7 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/donate': typeof DonateRoute
   '/events': typeof EventsRoute
+  '/features': typeof FeaturesRoute
   '/gallery': typeof GalleryRoute
   '/games': typeof GamesRoute
   '/imagine': typeof ImagineRoute
@@ -409,6 +418,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/donate'
     | '/events'
+    | '/features'
     | '/gallery'
     | '/games'
     | '/imagine'
@@ -452,6 +462,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/donate'
     | '/events'
+    | '/features'
     | '/gallery'
     | '/games'
     | '/imagine'
@@ -496,6 +507,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/donate'
     | '/events'
+    | '/features'
     | '/gallery'
     | '/games'
     | '/imagine'
@@ -541,6 +553,7 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   DonateRoute: typeof DonateRoute
   EventsRoute: typeof EventsRoute
+  FeaturesRoute: typeof FeaturesRoute
   GalleryRoute: typeof GalleryRoute
   GamesRoute: typeof GamesRoute
   ImagineRoute: typeof ImagineRoute
@@ -660,6 +673,13 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/features': {
+      id: '/features'
+      path: '/features'
+      fullPath: '/features'
+      preLoaderRoute: typeof FeaturesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gallery': {
@@ -897,6 +917,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   DonateRoute: DonateRoute,
   EventsRoute: EventsRoute,
+  FeaturesRoute: FeaturesRoute,
   GalleryRoute: GalleryRoute,
   GamesRoute: GamesRoute,
   ImagineRoute: ImagineRoute,
