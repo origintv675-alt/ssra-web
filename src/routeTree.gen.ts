@@ -17,6 +17,7 @@ import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as CodexRouteImport } from './routes/codex'
+import { Route as ConfessionsRouteImport } from './routes/confessions'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as DonateRouteImport } from './routes/donate'
@@ -87,6 +88,11 @@ const CalendarRoute = CalendarRouteImport.update({
 const CodexRoute = CodexRouteImport.update({
   id: '/codex',
   path: '/codex',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfessionsRoute = ConfessionsRouteImport.update({
+  id: '/confessions',
+  path: '/confessions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -259,6 +265,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/calendar': typeof CalendarRoute
   '/codex': typeof CodexRoute
+  '/confessions': typeof ConfessionsRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/donate': typeof DonateRoute
@@ -300,6 +307,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/calendar': typeof CalendarRoute
   '/codex': typeof CodexRoute
+  '/confessions': typeof ConfessionsRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/donate': typeof DonateRoute
@@ -343,6 +351,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/calendar': typeof CalendarRoute
   '/codex': typeof CodexRoute
+  '/confessions': typeof ConfessionsRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/donate': typeof DonateRoute
@@ -386,6 +395,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/calendar'
     | '/codex'
+    | '/confessions'
     | '/contact'
     | '/cookies'
     | '/donate'
@@ -427,6 +437,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/calendar'
     | '/codex'
+    | '/confessions'
     | '/contact'
     | '/cookies'
     | '/donate'
@@ -469,6 +480,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/calendar'
     | '/codex'
+    | '/confessions'
     | '/contact'
     | '/cookies'
     | '/donate'
@@ -512,6 +524,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CalendarRoute: typeof CalendarRoute
   CodexRoute: typeof CodexRoute
+  ConfessionsRoute: typeof ConfessionsRoute
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   DonateRoute: typeof DonateRoute
@@ -599,6 +612,13 @@ declare module '@tanstack/react-router' {
       path: '/codex'
       fullPath: '/codex'
       preLoaderRoute: typeof CodexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confessions': {
+      id: '/confessions'
+      path: '/confessions'
+      fullPath: '/confessions'
+      preLoaderRoute: typeof ConfessionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -852,6 +872,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CalendarRoute: CalendarRoute,
   CodexRoute: CodexRoute,
+  ConfessionsRoute: ConfessionsRoute,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   DonateRoute: DonateRoute,
