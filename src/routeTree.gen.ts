@@ -26,6 +26,7 @@ import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as GamesRouteImport } from './routes/games'
 import { Route as ImagineRouteImport } from './routes/imagine'
 import { Route as LobbyRouteImport } from './routes/lobby'
+import { Route as ManageRouteImport } from './routes/manage'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as ObjectsRouteImport } from './routes/objects'
 import { Route as PetsRouteImport } from './routes/pets'
@@ -133,6 +134,11 @@ const ImagineRoute = ImagineRouteImport.update({
 const LobbyRoute = LobbyRouteImport.update({
   id: '/lobby',
   path: '/lobby',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManageRoute = ManageRouteImport.update({
+  id: '/manage',
+  path: '/manage',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsRoute = NewsRouteImport.update({
@@ -274,6 +280,7 @@ export interface FileRoutesByFullPath {
   '/games': typeof GamesRoute
   '/imagine': typeof ImagineRoute
   '/lobby': typeof LobbyRoute
+  '/manage': typeof ManageRoute
   '/news': typeof NewsRoute
   '/objects': typeof ObjectsRoute
   '/pets': typeof PetsRoute
@@ -316,6 +323,7 @@ export interface FileRoutesByTo {
   '/games': typeof GamesRoute
   '/imagine': typeof ImagineRoute
   '/lobby': typeof LobbyRoute
+  '/manage': typeof ManageRoute
   '/news': typeof NewsRoute
   '/objects': typeof ObjectsRoute
   '/pets': typeof PetsRoute
@@ -360,6 +368,7 @@ export interface FileRoutesById {
   '/games': typeof GamesRoute
   '/imagine': typeof ImagineRoute
   '/lobby': typeof LobbyRoute
+  '/manage': typeof ManageRoute
   '/news': typeof NewsRoute
   '/objects': typeof ObjectsRoute
   '/pets': typeof PetsRoute
@@ -404,6 +413,7 @@ export interface FileRouteTypes {
     | '/games'
     | '/imagine'
     | '/lobby'
+    | '/manage'
     | '/news'
     | '/objects'
     | '/pets'
@@ -446,6 +456,7 @@ export interface FileRouteTypes {
     | '/games'
     | '/imagine'
     | '/lobby'
+    | '/manage'
     | '/news'
     | '/objects'
     | '/pets'
@@ -489,6 +500,7 @@ export interface FileRouteTypes {
     | '/games'
     | '/imagine'
     | '/lobby'
+    | '/manage'
     | '/news'
     | '/objects'
     | '/pets'
@@ -533,6 +545,7 @@ export interface RootRouteChildren {
   GamesRoute: typeof GamesRoute
   ImagineRoute: typeof ImagineRoute
   LobbyRoute: typeof LobbyRoute
+  ManageRoute: typeof ManageRoute
   NewsRoute: typeof NewsRoute
   ObjectsRoute: typeof ObjectsRoute
   PetsRoute: typeof PetsRoute
@@ -675,6 +688,13 @@ declare module '@tanstack/react-router' {
       path: '/lobby'
       fullPath: '/lobby'
       preLoaderRoute: typeof LobbyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage': {
+      id: '/manage'
+      path: '/manage'
+      fullPath: '/manage'
+      preLoaderRoute: typeof ManageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/news': {
@@ -881,6 +901,7 @@ const rootRouteChildren: RootRouteChildren = {
   GamesRoute: GamesRoute,
   ImagineRoute: ImagineRoute,
   LobbyRoute: LobbyRoute,
+  ManageRoute: ManageRoute,
   NewsRoute: NewsRoute,
   ObjectsRoute: ObjectsRoute,
   PetsRoute: PetsRoute,
