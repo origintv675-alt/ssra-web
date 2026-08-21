@@ -37,6 +37,7 @@ import { Route as SkyEventsRouteImport } from './routes/sky-events'
 import { Route as SkymapRouteImport } from './routes/skymap'
 import { Route as SolarSystemRouteImport } from './routes/solar-system'
 import { Route as SupportUsRouteImport } from './routes/support-us'
+import { Route as ThemesRouteImport } from './routes/themes'
 import { Route as TokensRouteImport } from './routes/tokens'
 import { Route as TrackersRouteImport } from './routes/trackers'
 import { Route as TutorialsRouteImport } from './routes/tutorials'
@@ -188,6 +189,11 @@ const SupportUsRoute = SupportUsRouteImport.update({
   path: '/support-us',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ThemesRoute = ThemesRouteImport.update({
+  id: '/themes',
+  path: '/themes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TokensRoute = TokensRouteImport.update({
   id: '/tokens',
   path: '/tokens',
@@ -273,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/skymap': typeof SkymapRoute
   '/solar-system': typeof SolarSystemRoute
   '/support-us': typeof SupportUsRoute
+  '/themes': typeof ThemesRoute
   '/tokens': typeof TokensRoute
   '/trackers': typeof TrackersRoute
   '/tutorials': typeof TutorialsRoute
@@ -313,6 +320,7 @@ export interface FileRoutesByTo {
   '/skymap': typeof SkymapRoute
   '/solar-system': typeof SolarSystemRoute
   '/support-us': typeof SupportUsRoute
+  '/themes': typeof ThemesRoute
   '/tokens': typeof TokensRoute
   '/trackers': typeof TrackersRoute
   '/tutorials': typeof TutorialsRoute
@@ -355,6 +363,7 @@ export interface FileRoutesById {
   '/skymap': typeof SkymapRoute
   '/solar-system': typeof SolarSystemRoute
   '/support-us': typeof SupportUsRoute
+  '/themes': typeof ThemesRoute
   '/tokens': typeof TokensRoute
   '/trackers': typeof TrackersRoute
   '/tutorials': typeof TutorialsRoute
@@ -397,6 +406,7 @@ export interface FileRouteTypes {
     | '/skymap'
     | '/solar-system'
     | '/support-us'
+    | '/themes'
     | '/tokens'
     | '/trackers'
     | '/tutorials'
@@ -437,6 +447,7 @@ export interface FileRouteTypes {
     | '/skymap'
     | '/solar-system'
     | '/support-us'
+    | '/themes'
     | '/tokens'
     | '/trackers'
     | '/tutorials'
@@ -478,6 +489,7 @@ export interface FileRouteTypes {
     | '/skymap'
     | '/solar-system'
     | '/support-us'
+    | '/themes'
     | '/tokens'
     | '/trackers'
     | '/tutorials'
@@ -520,6 +532,7 @@ export interface RootRouteChildren {
   SkymapRoute: typeof SkymapRoute
   SolarSystemRoute: typeof SolarSystemRoute
   SupportUsRoute: typeof SupportUsRoute
+  ThemesRoute: typeof ThemesRoute
   TokensRoute: typeof TokensRoute
   TrackersRoute: typeof TrackersRoute
   TutorialsRoute: typeof TutorialsRoute
@@ -728,6 +741,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SupportUsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/themes': {
+      id: '/themes'
+      path: '/themes'
+      fullPath: '/themes'
+      preLoaderRoute: typeof ThemesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tokens': {
       id: '/tokens'
       path: '/tokens'
@@ -852,6 +872,7 @@ const rootRouteChildren: RootRouteChildren = {
   SkymapRoute: SkymapRoute,
   SolarSystemRoute: SolarSystemRoute,
   SupportUsRoute: SupportUsRoute,
+  ThemesRoute: ThemesRoute,
   TokensRoute: TokensRoute,
   TrackersRoute: TrackersRoute,
   TutorialsRoute: TutorialsRoute,
