@@ -1027,6 +1027,16 @@ export type Database = {
         Args: { _task_id: string; _tokens: number }
         Returns: number
       }
+      confession_cloud: {
+        Args: { _limit?: number }
+        Returns: {
+          created_at: string
+          id: string
+          label: string
+          words: string
+        }[]
+      }
+      delete_my_site_theme: { Args: { _guest_id?: string }; Returns: boolean }
       delete_pet: {
         Args: { _guest_id?: string; _id: string }
         Returns: undefined

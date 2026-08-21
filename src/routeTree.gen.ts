@@ -17,14 +17,17 @@ import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as CodexRouteImport } from './routes/codex'
+import { Route as ConfessionsRouteImport } from './routes/confessions'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as DonateRouteImport } from './routes/donate'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as GamesRouteImport } from './routes/games'
 import { Route as ImagineRouteImport } from './routes/imagine'
 import { Route as LobbyRouteImport } from './routes/lobby'
+import { Route as ManageRouteImport } from './routes/manage'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as ObjectsRouteImport } from './routes/objects'
 import { Route as PetsRouteImport } from './routes/pets'
@@ -37,6 +40,7 @@ import { Route as SkyEventsRouteImport } from './routes/sky-events'
 import { Route as SkymapRouteImport } from './routes/skymap'
 import { Route as SolarSystemRouteImport } from './routes/solar-system'
 import { Route as SupportUsRouteImport } from './routes/support-us'
+import { Route as ThemesRouteImport } from './routes/themes'
 import { Route as TokensRouteImport } from './routes/tokens'
 import { Route as TrackersRouteImport } from './routes/trackers'
 import { Route as TutorialsRouteImport } from './routes/tutorials'
@@ -88,6 +92,11 @@ const CodexRoute = CodexRouteImport.update({
   path: '/codex',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConfessionsRoute = ConfessionsRouteImport.update({
+  id: '/confessions',
+  path: '/confessions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -108,6 +117,11 @@ const EventsRoute = EventsRouteImport.update({
   path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FeaturesRoute = FeaturesRouteImport.update({
+  id: '/features',
+  path: '/features',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
@@ -126,6 +140,11 @@ const ImagineRoute = ImagineRouteImport.update({
 const LobbyRoute = LobbyRouteImport.update({
   id: '/lobby',
   path: '/lobby',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManageRoute = ManageRouteImport.update({
+  id: '/manage',
+  path: '/manage',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsRoute = NewsRouteImport.update({
@@ -186,6 +205,11 @@ const SolarSystemRoute = SolarSystemRouteImport.update({
 const SupportUsRoute = SupportUsRouteImport.update({
   id: '/support-us',
   path: '/support-us',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ThemesRoute = ThemesRouteImport.update({
+  id: '/themes',
+  path: '/themes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TokensRoute = TokensRouteImport.update({
@@ -253,14 +277,17 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/calendar': typeof CalendarRoute
   '/codex': typeof CodexRoute
+  '/confessions': typeof ConfessionsRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/donate': typeof DonateRoute
   '/events': typeof EventsRoute
+  '/features': typeof FeaturesRoute
   '/gallery': typeof GalleryRoute
   '/games': typeof GamesRoute
   '/imagine': typeof ImagineRoute
   '/lobby': typeof LobbyRoute
+  '/manage': typeof ManageRoute
   '/news': typeof NewsRoute
   '/objects': typeof ObjectsRoute
   '/pets': typeof PetsRoute
@@ -273,6 +300,7 @@ export interface FileRoutesByFullPath {
   '/skymap': typeof SkymapRoute
   '/solar-system': typeof SolarSystemRoute
   '/support-us': typeof SupportUsRoute
+  '/themes': typeof ThemesRoute
   '/tokens': typeof TokensRoute
   '/trackers': typeof TrackersRoute
   '/tutorials': typeof TutorialsRoute
@@ -293,14 +321,17 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/calendar': typeof CalendarRoute
   '/codex': typeof CodexRoute
+  '/confessions': typeof ConfessionsRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/donate': typeof DonateRoute
   '/events': typeof EventsRoute
+  '/features': typeof FeaturesRoute
   '/gallery': typeof GalleryRoute
   '/games': typeof GamesRoute
   '/imagine': typeof ImagineRoute
   '/lobby': typeof LobbyRoute
+  '/manage': typeof ManageRoute
   '/news': typeof NewsRoute
   '/objects': typeof ObjectsRoute
   '/pets': typeof PetsRoute
@@ -313,6 +344,7 @@ export interface FileRoutesByTo {
   '/skymap': typeof SkymapRoute
   '/solar-system': typeof SolarSystemRoute
   '/support-us': typeof SupportUsRoute
+  '/themes': typeof ThemesRoute
   '/tokens': typeof TokensRoute
   '/trackers': typeof TrackersRoute
   '/tutorials': typeof TutorialsRoute
@@ -335,14 +367,17 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/calendar': typeof CalendarRoute
   '/codex': typeof CodexRoute
+  '/confessions': typeof ConfessionsRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
   '/donate': typeof DonateRoute
   '/events': typeof EventsRoute
+  '/features': typeof FeaturesRoute
   '/gallery': typeof GalleryRoute
   '/games': typeof GamesRoute
   '/imagine': typeof ImagineRoute
   '/lobby': typeof LobbyRoute
+  '/manage': typeof ManageRoute
   '/news': typeof NewsRoute
   '/objects': typeof ObjectsRoute
   '/pets': typeof PetsRoute
@@ -355,6 +390,7 @@ export interface FileRoutesById {
   '/skymap': typeof SkymapRoute
   '/solar-system': typeof SolarSystemRoute
   '/support-us': typeof SupportUsRoute
+  '/themes': typeof ThemesRoute
   '/tokens': typeof TokensRoute
   '/trackers': typeof TrackersRoute
   '/tutorials': typeof TutorialsRoute
@@ -377,14 +413,17 @@ export interface FileRouteTypes {
     | '/auth'
     | '/calendar'
     | '/codex'
+    | '/confessions'
     | '/contact'
     | '/cookies'
     | '/donate'
     | '/events'
+    | '/features'
     | '/gallery'
     | '/games'
     | '/imagine'
     | '/lobby'
+    | '/manage'
     | '/news'
     | '/objects'
     | '/pets'
@@ -397,6 +436,7 @@ export interface FileRouteTypes {
     | '/skymap'
     | '/solar-system'
     | '/support-us'
+    | '/themes'
     | '/tokens'
     | '/trackers'
     | '/tutorials'
@@ -417,14 +457,17 @@ export interface FileRouteTypes {
     | '/auth'
     | '/calendar'
     | '/codex'
+    | '/confessions'
     | '/contact'
     | '/cookies'
     | '/donate'
     | '/events'
+    | '/features'
     | '/gallery'
     | '/games'
     | '/imagine'
     | '/lobby'
+    | '/manage'
     | '/news'
     | '/objects'
     | '/pets'
@@ -437,6 +480,7 @@ export interface FileRouteTypes {
     | '/skymap'
     | '/solar-system'
     | '/support-us'
+    | '/themes'
     | '/tokens'
     | '/trackers'
     | '/tutorials'
@@ -458,14 +502,17 @@ export interface FileRouteTypes {
     | '/auth'
     | '/calendar'
     | '/codex'
+    | '/confessions'
     | '/contact'
     | '/cookies'
     | '/donate'
     | '/events'
+    | '/features'
     | '/gallery'
     | '/games'
     | '/imagine'
     | '/lobby'
+    | '/manage'
     | '/news'
     | '/objects'
     | '/pets'
@@ -478,6 +525,7 @@ export interface FileRouteTypes {
     | '/skymap'
     | '/solar-system'
     | '/support-us'
+    | '/themes'
     | '/tokens'
     | '/trackers'
     | '/tutorials'
@@ -500,14 +548,17 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CalendarRoute: typeof CalendarRoute
   CodexRoute: typeof CodexRoute
+  ConfessionsRoute: typeof ConfessionsRoute
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
   DonateRoute: typeof DonateRoute
   EventsRoute: typeof EventsRoute
+  FeaturesRoute: typeof FeaturesRoute
   GalleryRoute: typeof GalleryRoute
   GamesRoute: typeof GamesRoute
   ImagineRoute: typeof ImagineRoute
   LobbyRoute: typeof LobbyRoute
+  ManageRoute: typeof ManageRoute
   NewsRoute: typeof NewsRoute
   ObjectsRoute: typeof ObjectsRoute
   PetsRoute: typeof PetsRoute
@@ -520,6 +571,7 @@ export interface RootRouteChildren {
   SkymapRoute: typeof SkymapRoute
   SolarSystemRoute: typeof SolarSystemRoute
   SupportUsRoute: typeof SupportUsRoute
+  ThemesRoute: typeof ThemesRoute
   TokensRoute: typeof TokensRoute
   TrackersRoute: typeof TrackersRoute
   TutorialsRoute: typeof TutorialsRoute
@@ -588,6 +640,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CodexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/confessions': {
+      id: '/confessions'
+      path: '/confessions'
+      fullPath: '/confessions'
+      preLoaderRoute: typeof ConfessionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -616,6 +675,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/features': {
+      id: '/features'
+      path: '/features'
+      fullPath: '/features'
+      preLoaderRoute: typeof FeaturesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gallery': {
       id: '/gallery'
       path: '/gallery'
@@ -642,6 +708,13 @@ declare module '@tanstack/react-router' {
       path: '/lobby'
       fullPath: '/lobby'
       preLoaderRoute: typeof LobbyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage': {
+      id: '/manage'
+      path: '/manage'
+      fullPath: '/manage'
+      preLoaderRoute: typeof ManageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/news': {
@@ -726,6 +799,13 @@ declare module '@tanstack/react-router' {
       path: '/support-us'
       fullPath: '/support-us'
       preLoaderRoute: typeof SupportUsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/themes': {
+      id: '/themes'
+      path: '/themes'
+      fullPath: '/themes'
+      preLoaderRoute: typeof ThemesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tokens': {
@@ -832,14 +912,17 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CalendarRoute: CalendarRoute,
   CodexRoute: CodexRoute,
+  ConfessionsRoute: ConfessionsRoute,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
   DonateRoute: DonateRoute,
   EventsRoute: EventsRoute,
+  FeaturesRoute: FeaturesRoute,
   GalleryRoute: GalleryRoute,
   GamesRoute: GamesRoute,
   ImagineRoute: ImagineRoute,
   LobbyRoute: LobbyRoute,
+  ManageRoute: ManageRoute,
   NewsRoute: NewsRoute,
   ObjectsRoute: ObjectsRoute,
   PetsRoute: PetsRoute,
@@ -852,6 +935,7 @@ const rootRouteChildren: RootRouteChildren = {
   SkymapRoute: SkymapRoute,
   SolarSystemRoute: SolarSystemRoute,
   SupportUsRoute: SupportUsRoute,
+  ThemesRoute: ThemesRoute,
   TokensRoute: TokensRoute,
   TrackersRoute: TrackersRoute,
   TutorialsRoute: TutorialsRoute,
