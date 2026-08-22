@@ -55,6 +55,24 @@ type LockRow = { id: string; path: string; message: string | null; expires_at: s
 type IpRow = { ip: string; reason: string | null; created_at: string };
 type Account = { id: string; username?: string; name?: string; email?: string | null; space_tokens: number; banned: boolean; muted_until?: string | null; last_ip?: string | null };
 type LobbyRow = { id: string; author_name: string; content: string; created_at: string };
+type HealthReport = {
+  new_members_24h: number;
+  new_guests_24h: number;
+  lobby_24h: number;
+  dms_24h: number;
+  pets_total: number;
+  themes_total: number;
+  haunts_total: number;
+};
+type PetRow = { id: string; name: string; species: string; owner_name: string; times_petted: number };
+type ThemeRow = { id: string; title: string; owner_name: string; shared: boolean; applied_count: number; accent: string };
+type CounterRow = { key: string; value: number };
+type AuditResult = {
+  ceiling: number;
+  members: { id: string; username: string; space_tokens: number }[];
+  guests: { id: string; name: string; space_tokens: number }[];
+  duplicates: { user_id: string; task_id: string; day: string; count: number }[];
+};
 
 export function AdminPanel({ token, onLock }: { token: string; onLock: () => void }) {
   const run = useAdminAction();
@@ -69,6 +87,17 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
   const lobby = useAdminData<{ messages: LobbyRow[] }>(token, "list_lobby", 10_000);
   const haunts = useAdminData<{ haunts: Haunt[] }>(token, "list_haunts", 10_000);
   const confessions = useAdminData<{ confessions: Confession[] }>(token, "list_confessions", 20_000);
+  const health = useAdminData<HealthReport>(token, "health_report", 60_000);
+  const leaderboard = useAdminData<{ members: Account[]; guests: Account[] }>(token, "token_leaderboard", 60_000);
+  const petRows = useAdminData<{ pets: PetRow[] }>(token, "list_pets", 60_000);
+  const themeRows = useAdminData<{ themes: ThemeRow[] }>(token, "list_themes", 60_000);
+  const counters = useAdminData<{ counters: CounterRow[] }>(token, "list_counters", 60_000);
+
+  const [notice, setNotice] = useState({ title: "", body: "" });
+  const [audit, setAudit] = useState<AuditResult | null>(null);
+  const [counterValue, setCounterValue] = useState(0);
+
+
 
 
   const [intensity, setIntensity] = useState(3);
@@ -594,7 +623,136 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
         </div>
       </section>
 
+      <section className="glass-panel p-5">
+        <h2 className="text-lg font-semibold">Station health</h2>
+        <div className="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
+          {[
+            ["New members 24h", health.data?.new_members_24h],
+            ["New guests 24h", health.data?.new_guests_24h],
+            ["Lobby 24h", health.data?.lobby_24h],
+            ["DMs 24h", health.data?.dms_24h],
+            ["Pets", health.data?.pets_total],
+            ["Themes", health.data?.themes_total],
+            ["Hauntings", health.data?.haunts_total],
+          ].map(([label, value]) => (
+            <div key={String(label)} className="glass-inset p-3">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{label}</p>
+              <p className="mt-1 font-display text-xl font-bold text-primary">{Number(value ?? 0).toLocaleString()}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="glass-panel p-5">
+        <h2 className="text-lg font-semibold">Notifications</h2>
+        {selected?.kind === "member" && <p className="mt-2 text-xs text-primary">Target: {selected.account.username ?? selected.account.id}</p>}
+        <Input className="mt-3" placeholder="Title" value={notice.title} onChange={(e) => setNotice({ ...notice, title: e.target.value })} />
+        <Textarea className="mt-2" placeholder="Message" value={notice.body} onChange={(e) => setNotice({ ...notice, body: e.target.value })} />
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button size="sm" onClick={() => void act("broadcast_notification", { ...notice, ...(selected?.kind === "member" ? { user_id: selected.account.id } : {}) }, "Notification delivered.")}>
+            Send to {selected?.kind === "member" ? "this member" : "every member"}
+          </Button>
+          <Button size="sm" variant="destructive" onClick={() => void act("clear_notifications", selected?.kind === "member" ? { user_id: selected.account.id } : {}, "Notifications cleared.")}>Clear notifications</Button>
+        </div>
+      </section>
+
+      <section className="glass-panel p-5">
+        <h2 className="text-lg font-semibold">Token economy</h2>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Input className="w-40" type="number" value={tokenAmount} onChange={(e) => setTokenAmount(Number(e.target.value))} />
+          <Button size="sm" disabled={!selected} onClick={() => void act("set_tokens", { amount: tokenAmount, [`${selected?.kind === "member" ? "user" : "guest"}_id`]: selected?.account.id }, "Balance set.")}>Set selected balance</Button>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() =>
+              void run
+                .mutateAsync({ token, action: "token_audit", payload: {} })
+                .then((result) => setAudit(result as unknown as AuditResult))
+                .catch((e: Error) => toast.error(e.message))
+            }
+          >
+            Run exploit audit
+          </Button>
+        </div>
+        {audit && (
+          <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+            <p>Balances above {audit.ceiling.toLocaleString()}: {audit.members.length + audit.guests.length}</p>
+            {audit.members.map((m) => (
+              <p key={m.id}>{m.username} · {Number(m.space_tokens).toLocaleString()}</p>
+            ))}
+            {audit.guests.map((g) => (
+              <p key={g.id}>{g.name} (guest) · {Number(g.space_tokens).toLocaleString()}</p>
+            ))}
+            <p className="pt-1">Repeated daily claims: {audit.duplicates.length}</p>
+            {audit.duplicates.slice(0, 8).map((d) => (
+              <p key={`${d.user_id}-${d.task_id}-${d.day}`}>{d.task_id} × {d.count} on {d.day}</p>
+            ))}
+          </div>
+        )}
+        <div className="mt-4 grid gap-1 text-sm sm:grid-cols-2">
+          {(leaderboard.data?.members ?? []).slice(0, 10).map((m) => (
+            <div key={m.id} className="glass-inset px-3 py-2">{m.username} · {Number(m.space_tokens).toLocaleString()}</div>
+          ))}
+        </div>
+      </section>
+
+      <section className="glass-panel p-5">
+        <h2 className="text-lg font-semibold">Community content</h2>
+        <div className="mt-3 grid gap-4 lg:grid-cols-2">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Pets</p>
+            <div className="mt-2 max-h-56 space-y-2 overflow-y-auto text-sm">
+              {(petRows.data?.pets ?? []).map((pet) => (
+                <div key={pet.id} className="flex items-center justify-between rounded-lg bg-secondary/40 p-2.5">
+                  <span>{pet.name} · {pet.species} · {pet.owner_name}</span>
+                  <Button size="sm" variant="ghost" onClick={() => void act("delete_pet_row", { id: pet.id }, "Pet removed.")}>Delete</Button>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Themes</p>
+            <div className="mt-2 max-h-56 space-y-2 overflow-y-auto text-sm">
+              {(themeRows.data?.themes ?? []).map((theme) => (
+                <div key={theme.id} className="flex items-center justify-between gap-2 rounded-lg bg-secondary/40 p-2.5">
+                  <span>{theme.title} · {theme.owner_name} · {theme.applied_count} applied</span>
+                  <span className="flex gap-1">
+                    <Button size="sm" variant="ghost" onClick={() => void act("set_theme_shared", { id: theme.id, shared: !theme.shared }, theme.shared ? "Theme unshared." : "Theme shared.")}>{theme.shared ? "Unshare" : "Share"}</Button>
+                    <Button size="sm" variant="ghost" onClick={() => void act("delete_theme_row", { id: theme.id }, "Theme deleted.")}>Delete</Button>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="glass-panel p-5">
+        <h2 className="text-lg font-semibold">Counters and data hygiene</h2>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Input className="w-32" type="number" value={counterValue} onChange={(e) => setCounterValue(Number(e.target.value))} />
+          <span className="text-xs text-muted-foreground">value applied when you reset a counter</span>
+        </div>
+        <div className="mt-3 max-h-48 space-y-2 overflow-y-auto text-sm">
+          {(counters.data?.counters ?? []).map((counter) => (
+            <div key={counter.key} className="flex items-center justify-between rounded-lg bg-secondary/40 p-2.5">
+              <span>{counter.key} · {Number(counter.value).toLocaleString()}</span>
+              <Button size="sm" variant="ghost" onClick={() => void act("reset_counter", { key: counter.key, value: counterValue }, "Counter reset.")}>Reset</Button>
+            </div>
+          ))}
+        </div>
+        <Button
+          size="sm"
+          variant="destructive"
+          className="mt-3"
+          onClick={() => void act("purge_ai_messages", selected?.kind === "member" ? { user_id: selected.account.id } : {}, "AI history purged.")}
+        >
+          Purge {selected?.kind === "member" ? "this member's" : "all"} AI history
+        </Button>
+      </section>
+
       <Button variant="secondary" onClick={onLock}>Lock console</Button>
+
     </div>
   );
 }

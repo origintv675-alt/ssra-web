@@ -735,6 +735,190 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
       return { ok: true };
     }
 
+    // ---- Broadcasts and notifications -------------------------------------
+    case "broadcast_notification": {
+      const title = str(payload["title"]);
+      if (!title) throw new Error("A notification needs a title.");
+      const body = str(payload["body"]) || null;
+      const kind = str(payload["kind"], "system") || "system";
+      const one = str(payload["user_id"]);
+      if (one) {
+        const { error } = await supabase.from("notifications").insert({ user_id: one, title, body, kind });
+        if (error) throw new Error(error.message);
+        return { ok: true, sent: 1 };
+      }
+      const { data: members, error: listError } = await supabase.from("profiles").select("id").limit(2000);
+      if (listError) throw new Error(listError.message);
+      const rows = (members ?? []).map((m) => ({ user_id: (m as { id: string }).id, title, body, kind }));
+      if (rows.length) {
+        const { error } = await supabase.from("notifications").insert(rows);
+        if (error) throw new Error(error.message);
+      }
+      return { ok: true, sent: rows.length };
+    }
+
+    case "clear_notifications": {
+      const one = str(payload["user_id"]);
+      const query = supabase.from("notifications").delete();
+      const { error } = one ? await query.eq("user_id", one) : await query.neq("title", "");
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    // ---- Token economy -----------------------------------------------------
+    case "token_leaderboard": {
+      const { data: members } = await supabase
+        .from("profiles")
+        .select("id, username, space_tokens, is_pro")
+        .order("space_tokens", { ascending: false })
+        .limit(25);
+      const { data: guestRows } = await supabase
+        .from("guests")
+        .select("id, name, space_tokens")
+        .order("space_tokens", { ascending: false })
+        .limit(25);
+      return { members: members ?? [], guests: guestRows ?? [] };
+    }
+
+    case "set_tokens": {
+      const amount = Math.max(0, Math.round(num(payload["amount"], 0)));
+      const userId = str(payload["user_id"]);
+      const guestId = str(payload["guest_id"]);
+      if (userId) {
+        const { error } = await supabase.from("profiles").update({ space_tokens: amount }).eq("id", userId);
+        if (error) throw new Error(error.message);
+      } else if (guestId) {
+        const { error } = await supabase.from("guests").update({ space_tokens: amount }).eq("id", guestId);
+        if (error) throw new Error(error.message);
+      } else {
+        throw new Error("Pick an account first.");
+      }
+      return { ok: true, amount };
+    }
+
+    // Flags balances that no honest amount of daily tasks could produce, plus
+    // anyone claiming the same task twice on one day.
+    case "token_audit": {
+      const ceiling = Math.max(1000, num(payload["ceiling"], 250_000));
+      const { data: rich } = await supabase
+        .from("profiles")
+        .select("id, username, space_tokens")
+        .gt("space_tokens", ceiling)
+        .order("space_tokens", { ascending: false })
+        .limit(50);
+      const { data: richGuests } = await supabase
+        .from("guests")
+        .select("id, name, space_tokens")
+        .gt("space_tokens", ceiling)
+        .order("space_tokens", { ascending: false })
+        .limit(50);
+      const { data: claims } = await supabase
+        .from("task_completions")
+        .select("user_id, task_id, day")
+        .order("created_at", { ascending: false })
+        .limit(2000);
+      const seen = new Map<string, number>();
+      for (const row of (claims ?? []) as { user_id: string; task_id: string; day: string }[]) {
+        const key = `${row.user_id}|${row.task_id}|${row.day}`;
+        seen.set(key, (seen.get(key) ?? 0) + 1);
+      }
+      const duplicates = [...seen.entries()]
+        .filter(([, count]) => count > 1)
+        .map(([key, count]) => {
+          const [userId, taskId, day] = key.split("|");
+          return { user_id: userId, task_id: taskId, day, count };
+        })
+        .slice(0, 50);
+      return { ceiling, members: rich ?? [], guests: richGuests ?? [], duplicates };
+    }
+
+    // ---- Community content -------------------------------------------------
+    case "list_pets": {
+      const { data } = await supabase
+        .from("pets")
+        .select("id, name, species, owner_name, enabled, happiness, times_petted, created_at")
+        .order("created_at", { ascending: false })
+        .limit(60);
+      return { pets: data ?? [] };
+    }
+
+    case "delete_pet_row": {
+      const id = str(payload["id"]);
+      if (!id) throw new Error("Pick a pet.");
+      const { error } = await supabase.from("pets").delete().eq("id", id);
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    case "list_themes": {
+      const { data } = await supabase
+        .from("site_themes")
+        .select("id, title, owner_name, shared, applied_count, accent, updated_at")
+        .order("updated_at", { ascending: false })
+        .limit(60);
+      return { themes: data ?? [] };
+    }
+
+    case "set_theme_shared": {
+      const id = str(payload["id"]);
+      if (!id) throw new Error("Pick a theme.");
+      const { error } = await supabase.from("site_themes").update({ shared: bool(payload["shared"]) }).eq("id", id);
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    case "delete_theme_row": {
+      const id = str(payload["id"]);
+      if (!id) throw new Error("Pick a theme.");
+      const { error } = await supabase.from("site_themes").delete().eq("id", id);
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    // ---- Data hygiene ------------------------------------------------------
+    case "purge_ai_messages": {
+      const one = str(payload["user_id"]);
+      const query = supabase.from("ai_messages").delete();
+      const { error } = one ? await query.eq("user_id", one) : await query.neq("role", "");
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    case "list_counters": {
+      const { data } = await supabase.from("site_counters").select("key, value, updated_at").order("key");
+      return { counters: data ?? [] };
+    }
+
+    case "reset_counter": {
+      const key = str(payload["key"]);
+      if (!key) throw new Error("Pick a counter.");
+      const { error } = await supabase
+        .from("site_counters")
+        .update({ value: Math.max(0, Math.round(num(payload["value"], 0))), updated_at: new Date().toISOString() })
+        .eq("key", key);
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    // A one-shot health read: everything an admin usually opens five tabs for.
+    case "health_report": {
+      const since = new Date(Date.now() - 24 * 3600_000).toISOString();
+      const count = async (table: "profiles" | "guests" | "lobby_messages" | "direct_messages" | "pets" | "site_themes" | "haunts", column?: string) => {
+        const base = supabase.from(table).select("*", { count: "exact", head: true });
+        const { count: n } = column ? await base.gte(column, since) : await base;
+        return n ?? 0;
+      };
+      return {
+        new_members_24h: await count("profiles", "created_at"),
+        new_guests_24h: await count("guests", "created_at"),
+        lobby_24h: await count("lobby_messages", "created_at"),
+        dms_24h: await count("direct_messages", "created_at"),
+        pets_total: await count("pets"),
+        themes_total: await count("site_themes"),
+        haunts_total: await count("haunts"),
+      };
+    }
+
     default:
       throw new Error("Unknown admin action.");
   }
