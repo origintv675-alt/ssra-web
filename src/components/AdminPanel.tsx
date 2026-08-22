@@ -55,6 +55,24 @@ type LockRow = { id: string; path: string; message: string | null; expires_at: s
 type IpRow = { ip: string; reason: string | null; created_at: string };
 type Account = { id: string; username?: string; name?: string; email?: string | null; space_tokens: number; banned: boolean; muted_until?: string | null; last_ip?: string | null };
 type LobbyRow = { id: string; author_name: string; content: string; created_at: string };
+type HealthReport = {
+  new_members_24h: number;
+  new_guests_24h: number;
+  lobby_24h: number;
+  dms_24h: number;
+  pets_total: number;
+  themes_total: number;
+  haunts_total: number;
+};
+type PetRow = { id: string; name: string; species: string; owner_name: string; times_petted: number };
+type ThemeRow = { id: string; title: string; owner_name: string; shared: boolean; applied_count: number; accent: string };
+type CounterRow = { key: string; value: number };
+type AuditResult = {
+  ceiling: number;
+  members: { id: string; username: string; space_tokens: number }[];
+  guests: { id: string; name: string; space_tokens: number }[];
+  duplicates: { user_id: string; task_id: string; day: string; count: number }[];
+};
 
 export function AdminPanel({ token, onLock }: { token: string; onLock: () => void }) {
   const run = useAdminAction();
