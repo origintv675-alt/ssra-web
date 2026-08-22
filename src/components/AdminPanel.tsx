@@ -69,6 +69,17 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
   const lobby = useAdminData<{ messages: LobbyRow[] }>(token, "list_lobby", 10_000);
   const haunts = useAdminData<{ haunts: Haunt[] }>(token, "list_haunts", 10_000);
   const confessions = useAdminData<{ confessions: Confession[] }>(token, "list_confessions", 20_000);
+  const health = useAdminData<HealthReport>(token, "health_report", 60_000);
+  const leaderboard = useAdminData<{ members: Account[]; guests: Account[] }>(token, "token_leaderboard", 60_000);
+  const petRows = useAdminData<{ pets: PetRow[] }>(token, "list_pets", 60_000);
+  const themeRows = useAdminData<{ themes: ThemeRow[] }>(token, "list_themes", 60_000);
+  const counters = useAdminData<{ counters: CounterRow[] }>(token, "list_counters", 60_000);
+
+  const [notice, setNotice] = useState({ title: "", body: "" });
+  const [audit, setAudit] = useState<AuditResult | null>(null);
+  const [counterValue, setCounterValue] = useState(0);
+
+
 
 
   const [intensity, setIntensity] = useState(3);
