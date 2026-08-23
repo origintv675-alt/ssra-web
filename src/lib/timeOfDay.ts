@@ -10,13 +10,15 @@ export function isSkyMode(value: string | null | undefined): value is SkyMode {
   return Boolean(value) && (SKY_MODES as string[]).includes(value as string);
 }
 
-/** Local-time sky phase for the visitor: calm by day, alive at night, galactic at midnight. */
+/** Local-time sky phase: day, evening twilight, night, and the galactic core after 23:00. */
 export function skyModeForHour(hour: number): SkyMode {
-  if (hour >= 7 && hour < 17) return "day";
-  if (hour >= 23 || hour < 3) return "midnight";
-  if (hour < 5 || hour >= 20) return "night";
-  return "dusk";
+  if (hour >= 23 || hour < 2) return "midnight"; // late night only
+  if (hour >= 2 && hour < 6) return "night"; // pre-dawn
+  if (hour >= 6 && hour < 17) return "day";
+  if (hour >= 17 && hour < 20) return "dusk"; // evening twilight
+  return "night"; // 20:00–23:00
 }
+
 
 /**
  * Tracks the visitor's own local time and mirrors it on <html> as
