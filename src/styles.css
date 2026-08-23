@@ -379,6 +379,7 @@ html[data-sky="dusk"] footer {
   }
 }
 
+html.no-motion[data-sky="dusk"] body::after,
 html.no-motion[data-sky="dusk"] main,
 html.no-motion[data-sky="dusk"] header,
 html.no-motion[data-sky="dusk"] footer,
