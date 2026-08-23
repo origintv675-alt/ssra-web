@@ -167,34 +167,34 @@
   }
 }
 
-/* Liquid glass: SVG chromatic displacement refraction + lab() rim lighting. */
+/* Frosted glass: soft blur, subtle rim light, gentle outer glow. */
 @utility glass-panel {
   position: relative;
   isolation: isolate;
   border-radius: calc(var(--radius) + 6px);
-  background: hsl(0 0% 0% / var(--glass-frost, 0.1));
-  -webkit-backdrop-filter: url(#liquid-glass) saturate(var(--glass-saturation, 1.4));
-  backdrop-filter: url(#liquid-glass) saturate(var(--glass-saturation, 1.4));
+  background: hsl(0 0% 100% / calc(var(--glass-frost, 0.1) * 0.9));
+  border: 1px solid hsl(0 0% 100% / 0.14);
+  backdrop-filter: blur(22px) saturate(var(--glass-saturation, 1.4));
   box-shadow:
-    inset 0 0 2px 1px lab(100% 0 0 / 0.35),
-    inset 0 0 10px 4px lab(100% 0 0 / 0.15),
-    inset 0 4px 16px lab(5.32203% 1.61424 -5.88284 / 0.05),
-    inset 0 8px 24px lab(5.32203% 1.61424 -5.88284 / 0.05),
-    inset 0 6px 56px lab(5.32203% 1.61424 -5.88284 / 0.05);
+    inset 0 1px 0 hsl(0 0% 100% / 0.22),
+    inset 0 -1px 0 hsl(0 0% 100% / 0.06),
+    0 10px 34px hsl(265 60% 4% / 0.45),
+    0 0 24px oklch(0.74 0.23 330 / 0.1);
 }
 
 @utility glass-soft {
   position: relative;
   isolation: isolate;
   border-radius: calc(var(--radius) + 4px);
-  background: hsl(0 0% 0% / calc(var(--glass-frost, 0.1) * 0.6));
-  -webkit-backdrop-filter: url(#liquid-glass) saturate(var(--glass-saturation, 1.2));
-  backdrop-filter: url(#liquid-glass) saturate(var(--glass-saturation, 1.2));
+  background: hsl(0 0% 100% / calc(var(--glass-frost, 0.1) * 0.55));
+  border: 1px solid hsl(0 0% 100% / 0.1);
+  backdrop-filter: blur(16px) saturate(var(--glass-saturation, 1.2));
   box-shadow:
-    inset 0 0 2px 1px lab(100% 0 0 / 0.28),
-    inset 0 0 10px 4px lab(100% 0 0 / 0.1),
-    inset 0 6px 24px lab(5.32203% 1.61424 -5.88284 / 0.05);
+    inset 0 1px 0 hsl(0 0% 100% / 0.16),
+    0 6px 22px hsl(265 60% 4% / 0.35),
+    0 0 18px oklch(0.74 0.23 330 / 0.08);
 }
+
 
 @keyframes glass-sheen {
   0%,
@@ -321,10 +321,35 @@ html[data-sky="midnight"] body::after {
   }
 }
 
-/* Dusk: everything slowly vanishes as the light drains away. */
+/* Dusk: light drains away and the first, extremely faint stars/aurora appear. */
 html[data-sky="dusk"] body::before {
   background: radial-gradient(120% 90% at 50% -10%, oklch(0.32 0.08 300 / 35%), transparent 64%);
   animation: dusk-drain 14s ease-in-out infinite alternate;
+}
+
+html[data-sky="dusk"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background:
+    radial-gradient(70% 30% at 30% 18%, oklch(0.8 0.2 155 / 22%), transparent 70%),
+    radial-gradient(60% 26% at 72% 12%, oklch(0.82 0.16 196 / 16%), transparent 72%);
+  filter: blur(30px);
+  animation: dusk-aurora 24s ease-in-out infinite alternate;
+}
+
+@keyframes dusk-aurora {
+  from {
+    opacity: 0.08;
+    transform: translate3d(-1%, 0, 0) scale(1.02);
+  }
+  to {
+    opacity: 0.2;
+    transform: translate3d(1.5%, -1%, 0) scale(1.06);
+  }
 }
 
 html[data-sky="dusk"] main,
@@ -332,6 +357,7 @@ html[data-sky="dusk"] header,
 html[data-sky="dusk"] footer {
   animation: dusk-vanish 16s ease-in-out infinite alternate;
 }
+
 
 @keyframes dusk-drain {
   from {
@@ -353,6 +379,7 @@ html[data-sky="dusk"] footer {
   }
 }
 
+html.no-motion[data-sky="dusk"] body::after,
 html.no-motion[data-sky="dusk"] main,
 html.no-motion[data-sky="dusk"] header,
 html.no-motion[data-sky="dusk"] footer,
@@ -443,15 +470,15 @@ html.comet-cursor select {
 }
 
 @utility glass-inset {
-  background: hsl(0 0% 0% / calc(var(--glass-frost, 0.1) * 0.8));
-  -webkit-backdrop-filter: url(#liquid-glass) saturate(var(--glass-saturation, 1.2));
-  backdrop-filter: url(#liquid-glass) saturate(var(--glass-saturation, 1.2));
+  background: hsl(0 0% 100% / calc(var(--glass-frost, 0.1) * 0.5));
+  border: 1px solid hsl(0 0% 100% / 0.08);
+  backdrop-filter: blur(12px) saturate(var(--glass-saturation, 1.2));
   border-radius: var(--radius);
   box-shadow:
-    inset 0 0 2px 1px lab(100% 0 0 / 0.3),
-    inset 0 0 10px 4px lab(100% 0 0 / 0.12),
-    inset 0 6px 24px lab(5.32203% 1.61424 -5.88284 / 0.05);
+    inset 0 1px 0 hsl(0 0% 100% / 0.14),
+    0 0 14px oklch(0.74 0.23 330 / 0.07);
 }
+
 
 @utility aurora-band {
   background: linear-gradient(
