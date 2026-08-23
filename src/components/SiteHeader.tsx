@@ -33,8 +33,13 @@ const links = [
   { to: "/security", label: "Security" },
   { to: "/assistant", label: "AI Assistant" },
   { to: "/community", label: "Community" },
+  { to: "/features", label: "Features" },
+  { to: "/themes", label: "Themes" },
+  { to: "/manage", label: "Manage" },
+  { to: "/confessions", label: "Confessions" },
   { to: "/pro", label: "Pro" },
   { to: "/admin", label: "Admin" },
+
 ] as const;
 
 const proLinks = [
