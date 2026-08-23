@@ -321,10 +321,35 @@ html[data-sky="midnight"] body::after {
   }
 }
 
-/* Dusk: everything slowly vanishes as the light drains away. */
+/* Dusk: light drains away and the first, extremely faint stars/aurora appear. */
 html[data-sky="dusk"] body::before {
   background: radial-gradient(120% 90% at 50% -10%, oklch(0.32 0.08 300 / 35%), transparent 64%);
   animation: dusk-drain 14s ease-in-out infinite alternate;
+}
+
+html[data-sky="dusk"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background:
+    radial-gradient(70% 30% at 30% 18%, oklch(0.8 0.2 155 / 22%), transparent 70%),
+    radial-gradient(60% 26% at 72% 12%, oklch(0.82 0.16 196 / 16%), transparent 72%);
+  filter: blur(30px);
+  animation: dusk-aurora 24s ease-in-out infinite alternate;
+}
+
+@keyframes dusk-aurora {
+  from {
+    opacity: 0.08;
+    transform: translate3d(-1%, 0, 0) scale(1.02);
+  }
+  to {
+    opacity: 0.2;
+    transform: translate3d(1.5%, -1%, 0) scale(1.06);
+  }
 }
 
 html[data-sky="dusk"] main,
@@ -332,6 +357,7 @@ html[data-sky="dusk"] header,
 html[data-sky="dusk"] footer {
   animation: dusk-vanish 16s ease-in-out infinite alternate;
 }
+
 
 @keyframes dusk-drain {
   from {
