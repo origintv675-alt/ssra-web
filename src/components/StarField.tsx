@@ -152,7 +152,8 @@ export function StarField() {
       t += 1;
       const sky = modeRef.current;
       const night =
-        sky === "midnight" ? 1.25 : sky === "night" ? 1 : sky === "dusk" ? 0.35 : 0.12;
+        sky === "midnight" ? 1.25 : sky === "night" ? 1 : sky === "dusk" ? 0.16 : 0.1;
+
       scroll += (scrollTarget - scroll) * 0.08;
       warpRef.current *= 0.94;
       const warp = warpRef.current;
