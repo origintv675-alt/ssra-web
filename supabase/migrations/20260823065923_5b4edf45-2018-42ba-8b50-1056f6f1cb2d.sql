@@ -1,0 +1,2 @@
+REVOKE ALL ON public.guests, public.haunts, public.haunt_confessions, public.lobby_messages, public.live_visitors, public.banned_ips, public.admin_sessions, public.site_popups, public.page_locks, public.guest_task_completions FROM anon, authenticated;
+GRANT ALL ON public.guests, public.haunts, public.haunt_confessions, public.lobby_messages, public.live_visitors, public.banned_ips, public.admin_sessions, public.site_popups, public.page_locks, public.guest_task_completions TO service_role;
