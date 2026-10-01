@@ -268,13 +268,16 @@ export type Database = {
           banned: boolean
           banned_until: string | null
           created_at: string
+          equipped_badges: string[]
           id: string
           is_pro: boolean
+          is_rich: boolean
           kicked_at: string | null
           last_ip: string | null
           last_seen_at: string
           lifetime_pro: boolean
           name: string
+          rich_reward_day: string | null
           space_tokens: number
         }
         Insert: {
@@ -283,13 +286,16 @@ export type Database = {
           banned?: boolean
           banned_until?: string | null
           created_at?: string
+          equipped_badges?: string[]
           id?: string
           is_pro?: boolean
+          is_rich?: boolean
           kicked_at?: string | null
           last_ip?: string | null
           last_seen_at?: string
           lifetime_pro?: boolean
           name: string
+          rich_reward_day?: string | null
           space_tokens?: number
         }
         Update: {
@@ -298,13 +304,16 @@ export type Database = {
           banned?: boolean
           banned_until?: string | null
           created_at?: string
+          equipped_badges?: string[]
           id?: string
           is_pro?: boolean
+          is_rich?: boolean
           kicked_at?: string | null
           last_ip?: string | null
           last_seen_at?: string
           lifetime_pro?: boolean
           name?: string
+          rich_reward_day?: string | null
           space_tokens?: number
         }
         Relationships: []
@@ -622,12 +631,15 @@ export type Database = {
           banned_until: string | null
           bio: string | null
           created_at: string
+          equipped_badges: string[]
           id: string
           is_pro: boolean
+          is_rich: boolean
           kicked_at: string | null
           lifetime_pro: boolean
           muted_until: string | null
           pro_since: string | null
+          rich_reward_day: string | null
           space_tokens: number
           updated_at: string
           username: string
@@ -640,12 +652,15 @@ export type Database = {
           banned_until?: string | null
           bio?: string | null
           created_at?: string
+          equipped_badges?: string[]
           id: string
           is_pro?: boolean
+          is_rich?: boolean
           kicked_at?: string | null
           lifetime_pro?: boolean
           muted_until?: string | null
           pro_since?: string | null
+          rich_reward_day?: string | null
           space_tokens?: number
           updated_at?: string
           username: string
@@ -658,12 +673,15 @@ export type Database = {
           banned_until?: string | null
           bio?: string | null
           created_at?: string
+          equipped_badges?: string[]
           id?: string
           is_pro?: boolean
+          is_rich?: boolean
           kicked_at?: string | null
           lifetime_pro?: boolean
           muted_until?: string | null
           pro_since?: string | null
+          rich_reward_day?: string | null
           space_tokens?: number
           updated_at?: string
           username?: string
@@ -1023,6 +1041,7 @@ export type Database = {
     }
     Functions: {
       bump_theme_applied: { Args: { _id: string }; Returns: undefined }
+      claim_rich_daily: { Args: { _guest_id?: string }; Returns: Json }
       complete_daily_task: {
         Args: { _task_id: string; _tokens: number }
         Returns: number
@@ -1228,6 +1247,7 @@ export type Database = {
         Returns: undefined
       }
       unlock_pro_with_tokens: { Args: never; Returns: Json }
+      unlock_rich_with_tokens: { Args: { _guest_id?: string }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
