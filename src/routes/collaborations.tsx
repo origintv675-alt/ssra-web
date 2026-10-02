@@ -66,7 +66,7 @@ const projects = [
     eyebrow: "Open-source simulation",
     title: "SSRA × NEUprint",
     description:
-      "Together with Neuprint, we built an open-source fly-brain simulator with almost every neuron activated, including systems for sight, touch, smell and more. The simulation is accessible to everyone.",
+      "Together with Neuprint, we built an open-source fly-brain simulator with almost every neuron activated, including systems for sight, touch, smell and more. Accessible to anyone, this simulation can run in the background forever and even runs under 64 kilobytes per second — under 2 MB per hour.",
     href: "https://flyrevival.lovable.app",
     action: "Explore Fly Revival",
   },
@@ -76,7 +76,7 @@ const projects = [
     title: "SSRA × ASUS ROG",
     rgb: true,
     description:
-      "We collaborated with ASUS ROG on an experimental online CPU reaching up to 5 GHz, with online RAM and SSD storage. Try the mini game while we keep advancing the technology. Future updates aim to expand the virtual SSD up to 2 TB and increase RAM — you can even write on Paper and use it as RAM.",
+      "We and ASUS ROG collaborated to make the world's first online CPU, managing to reach up to 5 GHz, with online RAM and online SSD storage. Try our small mini game while we make our technology more advanced day by day. Future updates aim to expand the virtual SSD to a lot more (up to 2 TB), and RAM too — you can even write on paper and use it as RAM!",
     href: "https://nightcity2077.lovable.app",
     action: "Try the experiment",
   },
