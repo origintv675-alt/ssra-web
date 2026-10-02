@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 const links = [
   { to: "/", label: "Home" },
   { to: "/about", label: "About" },
+  { to: "/collaborations", label: "Collaborations" },
   { to: "/news", label: "News" },
   { to: "/events", label: "Events" },
   { to: "/skymap", label: "Sky map" },

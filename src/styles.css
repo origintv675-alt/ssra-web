@@ -66,6 +66,8 @@
   --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --color-glass: var(--glass);
   --color-glass-border: var(--glass-border);
+  --color-signal-blue: var(--signal-blue);
+  --color-partner-purple: var(--partner-purple);
   --animate-float: float 7s ease-in-out infinite;
   --animate-drift: drift 26s linear infinite;
   --animate-pulse-glow: pulse-glow 3.5s ease-in-out infinite;
@@ -97,6 +99,8 @@
   --ring: oklch(0.8 0.15 220);
   --glass: oklch(0.72 0.12 250 / 10%);
   --glass-border: oklch(0.92 0.08 235 / 26%);
+  --signal-blue: oklch(0.42 0.14 255);
+  --partner-purple: oklch(0.67 0.2 305);
   --chart-1: oklch(0.82 0.16 196);
   --chart-2: oklch(0.74 0.23 330);
   --chart-3: oklch(0.7 0.18 275);

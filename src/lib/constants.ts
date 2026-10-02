@@ -1,5 +1,5 @@
 export const WHATSAPP_GROUP_URL =
-  "https://chat.whatsapp.com/G5zZm3WobSg8KEHLarmXwx?s=cl&p=a&mlu=0";
+  "https://chat.whatsapp.com/G5zZm3WobSg8KEHLarmXwx";
 
 export const SUPPORT_EMAIL = "ssraofficialsupport@gmail.com";
 
