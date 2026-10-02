@@ -40,9 +40,9 @@ const projects = [
     eyebrow: "Past collaboration",
     title: (
       <>
-        <span className="text-[hsl(var(--signal-blue))]">SSRA</span>
+        <span className="text-signal-blue">SSRA</span>
         <span className="text-muted-foreground"> × </span>
-        <span className="text-[hsl(var(--partner-purple))]">Virgin Galactic</span>
+        <span className="text-partner-purple">Virgin Galactic</span>
       </>
     ),
     dates: "25 December 2025 — 30 July 2026",

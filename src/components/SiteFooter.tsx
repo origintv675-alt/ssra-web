@@ -23,6 +23,7 @@ export function SiteFooter() {
           <h3 className="font-display text-sm uppercase tracking-widest text-foreground">Explore</h3>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li><Link to="/about" className="hover:text-primary">About us</Link></li>
+            <li><Link to="/collaborations" className="hover:text-primary">Collaborations &amp; projects</Link></li>
             <li><Link to="/news" className="hover:text-primary">Daily space news</Link></li>
             <li><Link to="/events" className="hover:text-primary">Events</Link></li>
             <li><Link to="/skymap" className="hover:text-primary">Live sky map</Link></li>
