@@ -28,3 +28,4 @@
 - “Rich subscription” uses the previously specified 20,000-token unlock, 150-token daily reward, and Rich badge.
 - Collaborations remain editorial public content; only authenticated console admins can change them.
 - The spacecraft reveal is a playful on-page effect and does not navigate away from the collaboration page.
+- Design the page if you need like it bugs and does not appear in time
