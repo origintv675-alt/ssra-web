@@ -145,6 +145,23 @@ function CollaborationsPage() {
               )}
               <p className="mt-4 flex-1 text-sm leading-7 text-muted-foreground">{project.description}</p>
 
+              {"dare" in project && project.dare && (
+                <div className="mt-5 border-l-2 border-primary/60 pl-4">
+                  <p className="flex items-start gap-2 text-sm font-semibold text-foreground">
+                    <Flame className="mt-0.5 h-4 w-4 shrink-0 text-destructive" /> {project.dare.text}
+                  </p>
+                  <a
+                    href={project.dare.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-2 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" /> {project.dare.label}
+                  </a>
+                </div>
+              )}
+
+
               {"unavailable" in project && project.unavailable && (
                 <div className="mt-5 border-l-2 border-destructive/70 pl-4">
                   <p className="flex items-center gap-2 text-sm font-semibold text-destructive">
