@@ -60,6 +60,11 @@ const projects = [
       "Many people do not enjoy the operating system built into their smart TV, including platforms such as Tizen OS. OriginTV is our website-based TV system for everyone, with daily security updates and much more.",
     href: "https://origintv.lovable.app",
     action: "Open OriginTV",
+    dare: {
+      text: "Want to visit first version? It contains many lag and non workable things! If you dare visit it!",
+      href: "https://fep-otv.lovable.app",
+      label: "fep-otv.lovable.app",
+    },
   },
   {
     icon: BrainCircuit,
@@ -79,6 +84,15 @@ const projects = [
       "We and ASUS ROG collaborated to make the world's first online CPU, managing to reach up to 5 GHz, with online RAM and online SSD storage. Try our small mini game while we make our technology more advanced day by day. Future updates aim to expand the virtual SSD to a lot more (up to 2 TB), and RAM too — you can even write on paper and use it as RAM!",
     href: "https://nightcity2077.lovable.app",
     action: "Try the experiment",
+  },
+  {
+    icon: Satellite,
+    eyebrow: "Experimental — in beta",
+    title: "SSRA × NASA",
+    description:
+      "Spaceos is our experimental operating system, built as a collaboration between SSRA and NASA. Keep in mind: the website preview of the OS and the actual OS are actually a lot different. And it gets under 0.05 MB per hour.",
+    href: "https://spaceospreview.lovable.app",
+    action: "Preview Spaceos",
   },
 ] as const;
 
