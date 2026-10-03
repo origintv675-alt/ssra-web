@@ -4,9 +4,11 @@ import {
   CalendarRange,
   Cpu,
   ExternalLink,
+  Flame,
   LockKeyhole,
   MessageCircle,
   Rocket,
+  Satellite,
   Tv,
 } from "lucide-react";
 
@@ -25,7 +27,8 @@ export const Route = createFileRoute("/collaborations")({
       { property: "og:title", content: "Collaborations & Projects — SSRA" },
       {
         property: "og:description",
-        content: "SSRA partnerships, experiments and community-built technology projects.",
+        content:
+          "SSRA partnerships and projects with Virgin Galactic, OriginTV, Neuprint, ASUS ROG and NASA — plus the experimental Spaceos OS.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -60,6 +63,11 @@ const projects = [
       "Many people do not enjoy the operating system built into their smart TV, including platforms such as Tizen OS. OriginTV is our website-based TV system for everyone, with daily security updates and much more.",
     href: "https://origintv.lovable.app",
     action: "Open OriginTV",
+    dare: {
+      text: "Want to visit first version? It contains many lag and non workable things! If you dare visit it!",
+      href: "https://fep-otv.lovable.app",
+      label: "fep-otv.lovable.app",
+    },
   },
   {
     icon: BrainCircuit,
@@ -79,6 +87,15 @@ const projects = [
       "We and ASUS ROG collaborated to make the world's first online CPU, managing to reach up to 5 GHz, with online RAM and online SSD storage. Try our small mini game while we make our technology more advanced day by day. Future updates aim to expand the virtual SSD to a lot more (up to 2 TB), and RAM too — you can even write on paper and use it as RAM!",
     href: "https://nightcity2077.lovable.app",
     action: "Try the experiment",
+  },
+  {
+    icon: Satellite,
+    eyebrow: "Experimental — in beta",
+    title: "SSRA × NASA",
+    description:
+      "Spaceos is our experimental operating system, built as a collaboration between SSRA and NASA. Keep in mind: the website preview of the OS and the actual OS are actually a lot different. And it gets under 0.05 MB per hour.",
+    href: "https://spaceospreview.lovable.app",
+    action: "Preview Spaceos",
   },
 ] as const;
 
@@ -127,6 +144,23 @@ function CollaborationsPage() {
                 </p>
               )}
               <p className="mt-4 flex-1 text-sm leading-7 text-muted-foreground">{project.description}</p>
+
+              {"dare" in project && project.dare && (
+                <div className="mt-5 border-l-2 border-primary/60 pl-4">
+                  <p className="flex items-start gap-2 text-sm font-semibold text-foreground">
+                    <Flame className="mt-0.5 h-4 w-4 shrink-0 text-destructive" /> {project.dare.text}
+                  </p>
+                  <a
+                    href={project.dare.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-2 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" /> {project.dare.label}
+                  </a>
+                </div>
+              )}
+
 
               {"unavailable" in project && project.unavailable && (
                 <div className="mt-5 border-l-2 border-destructive/70 pl-4">
