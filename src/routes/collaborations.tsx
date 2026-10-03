@@ -4,9 +4,11 @@ import {
   CalendarRange,
   Cpu,
   ExternalLink,
+  Flame,
   LockKeyhole,
   MessageCircle,
   Rocket,
+  Satellite,
   Tv,
 } from "lucide-react";
 
@@ -25,7 +27,8 @@ export const Route = createFileRoute("/collaborations")({
       { property: "og:title", content: "Collaborations & Projects — SSRA" },
       {
         property: "og:description",
-        content: "SSRA partnerships, experiments and community-built technology projects.",
+        content:
+          "SSRA partnerships and projects with Virgin Galactic, OriginTV, Neuprint, ASUS ROG and NASA — plus the experimental Spaceos OS.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
