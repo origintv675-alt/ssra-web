@@ -458,6 +458,48 @@ export async function runAdminAction(action: string, payload: Payload): Promise<
       return { ok: true };
     }
 
+    case "list_collabs": {
+      const { data, error } = await supabase.from("collaborations").select("id, title, status, href, sort_order").order("sort_order");
+      if (error) throw new Error(error.message);
+      return { collabs: data ?? [] };
+    }
+
+    case "create_collab": {
+      const title = str(payload["title"]);
+      if (!title) throw new Error("A collaboration needs a title.");
+      const href = str(payload["href"]);
+      if (href && !/^https:\/\//i.test(href)) throw new Error("Links must start with https://");
+      const status = ["active", "beta", "closed"].includes(str(payload["status"])) ? str(payload["status"]) : "active";
+      const { error } = await supabase.from("collaborations").insert({
+        title,
+        eyebrow: str(payload["eyebrow"]) || "Collaboration",
+        description: str(payload["description"]),
+        href: href || null,
+        action_label: str(payload["action_label"]) || "Open project",
+        dates: str(payload["dates"]) || null,
+        note: str(payload["note"]) || null,
+        status,
+        sort_order: num(payload["sort_order"], 100),
+      });
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    case "delete_collab": {
+      const { error } = await supabase.from("collaborations").delete().eq("id", str(payload["id"]));
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    case "set_super_pro": {
+      const id = str(payload["id"]);
+      const table = str(payload["kind"]) === "guest" ? "guests" : "profiles";
+      const on = bool(payload["on"]);
+      const { error } = await supabase.from(table).update(on ? { super_pro: true, is_pro: true } : { super_pro: false }).eq("id", id);
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
     case "create_event": {
       const title = str(payload["title"]);
       if (!title) throw new Error("An event needs a title.");
