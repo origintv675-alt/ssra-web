@@ -1258,3 +1258,11 @@ html.is-glitched body {
   60% { filter: invert(1); }
   80% { filter: hue-rotate(200deg) saturate(2); transform: translateX(-3px); }
 }
+
+/* Hidden SSRA × NASA spacecraft reveal */
+@keyframes nasa-fly { 0% { transform: translate(-60vw, 30vh) scale(.6); opacity: 0 } 15% { opacity: 1 } 60% { transform: translate(0, 0) scale(1.1) } 100% { transform: translate(0, 0) scale(1) } }
+@keyframes nasa-rise { 0%, 55% { opacity: 0; transform: translateY(16px) } 100% { opacity: 1; transform: none } }
+@keyframes nasa-stars { from { background-position: 0 0 } to { background-position: -480px 120px } }
+.nasa-craft { animation: nasa-fly 3.2s cubic-bezier(.2,.8,.2,1) both }
+.nasa-title { animation: nasa-rise 3.6s ease-out both }
+@media (prefers-reduced-motion: reduce) { .nasa-craft, .nasa-title { animation: none } }
