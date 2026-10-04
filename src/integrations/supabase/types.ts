@@ -100,6 +100,57 @@ export type Database = {
         }
         Relationships: []
       }
+      collaborations: {
+        Row: {
+          action_label: string
+          created_at: string
+          dare_href: string | null
+          dare_text: string | null
+          dates: string | null
+          description: string
+          eyebrow: string
+          href: string | null
+          id: string
+          note: string | null
+          sort_order: number
+          status: string
+          style: string
+          title: string
+        }
+        Insert: {
+          action_label?: string
+          created_at?: string
+          dare_href?: string | null
+          dare_text?: string | null
+          dates?: string | null
+          description?: string
+          eyebrow?: string
+          href?: string | null
+          id?: string
+          note?: string | null
+          sort_order?: number
+          status?: string
+          style?: string
+          title: string
+        }
+        Update: {
+          action_label?: string
+          created_at?: string
+          dare_href?: string | null
+          dare_text?: string | null
+          dates?: string | null
+          description?: string
+          eyebrow?: string
+          href?: string | null
+          id?: string
+          note?: string | null
+          sort_order?: number
+          status?: string
+          style?: string
+          title?: string
+        }
+        Relationships: []
+      }
       direct_messages: {
         Row: {
           content: string
@@ -276,6 +327,8 @@ export type Database = {
           lifetime_pro: boolean
           name: string
           space_tokens: number
+          super_pro: boolean
+          super_reward_day: string | null
         }
         Insert: {
           badge?: string | null
@@ -291,6 +344,8 @@ export type Database = {
           lifetime_pro?: boolean
           name: string
           space_tokens?: number
+          super_pro?: boolean
+          super_reward_day?: string | null
         }
         Update: {
           badge?: string | null
@@ -306,6 +361,8 @@ export type Database = {
           lifetime_pro?: boolean
           name?: string
           space_tokens?: number
+          super_pro?: boolean
+          super_reward_day?: string | null
         }
         Relationships: []
       }
@@ -629,6 +686,8 @@ export type Database = {
           muted_until: string | null
           pro_since: string | null
           space_tokens: number
+          super_pro: boolean
+          super_reward_day: string | null
           updated_at: string
           username: string
         }
@@ -647,6 +706,8 @@ export type Database = {
           muted_until?: string | null
           pro_since?: string | null
           space_tokens?: number
+          super_pro?: boolean
+          super_reward_day?: string | null
           updated_at?: string
           username: string
         }
@@ -665,6 +726,8 @@ export type Database = {
           muted_until?: string | null
           pro_since?: string | null
           space_tokens?: number
+          super_pro?: boolean
+          super_reward_day?: string | null
           updated_at?: string
           username?: string
         }
@@ -1023,6 +1086,7 @@ export type Database = {
     }
     Functions: {
       bump_theme_applied: { Args: { _id: string }; Returns: undefined }
+      claim_super_pro_daily: { Args: never; Returns: Json }
       complete_daily_task: {
         Args: { _task_id: string; _tokens: number }
         Returns: number
@@ -1040,6 +1104,10 @@ export type Database = {
       delete_pet: {
         Args: { _guest_id?: string; _id: string }
         Returns: undefined
+      }
+      guest_claim_super_pro_daily: {
+        Args: { _guest_id: string }
+        Returns: Json
       }
       guest_complete_task: {
         Args: { _guest_id: string; _task_id: string; _tokens: number }
@@ -1077,6 +1145,7 @@ export type Database = {
         Returns: Json
       }
       guest_state: { Args: { _guest_id: string }; Returns: Json }
+      guest_super_state: { Args: { _guest_id: string }; Returns: Json }
       guest_task_ids: {
         Args: { _day?: string; _guest_id: string }
         Returns: {
@@ -1084,6 +1153,7 @@ export type Database = {
         }[]
       }
       guest_unlock_pro: { Args: { _guest_id: string }; Returns: Json }
+      guest_unlock_super_pro: { Args: { _guest_id: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1228,6 +1298,7 @@ export type Database = {
         Returns: undefined
       }
       unlock_pro_with_tokens: { Args: never; Returns: Json }
+      unlock_super_pro_with_tokens: { Args: never; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
