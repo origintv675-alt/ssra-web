@@ -92,6 +92,9 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
   const petRows = useAdminData<{ pets: PetRow[] }>(token, "list_pets", 60_000);
   const themeRows = useAdminData<{ themes: ThemeRow[] }>(token, "list_themes", 60_000);
   const counters = useAdminData<{ counters: CounterRow[] }>(token, "list_counters", 60_000);
+  const collabRows = useAdminData<{ collabs: { id: string; title: string; status: string }[] }>(token, "list_collabs", 30_000);
+  const emptyCollab = { title: "", eyebrow: "", href: "", action_label: "", dates: "", status: "active", description: "" };
+  const [collabDraft, setCollabDraft] = useState(emptyCollab);
 
   const [notice, setNotice] = useState({ title: "", body: "" });
   const [audit, setAudit] = useState<AuditResult | null>(null);
@@ -409,6 +412,12 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
             </>
           )}
           {selected && (
+            <>
+              <Button size="sm" variant="secondary" onClick={() => void act("set_super_pro", { id: selected.account.id, kind: selected.kind, on: true }, "Super Pro granted.")}>Grant Super Pro</Button>
+              <Button size="sm" variant="secondary" onClick={() => void act("set_super_pro", { id: selected.account.id, kind: selected.kind, on: false }, "Super Pro removed.")}>Remove Super Pro</Button>
+            </>
+          )}
+          {selected && (
             <Button size="sm" variant="secondary" onClick={() => void act("set_badge", { [`${selected.kind === "member" ? "user" : "guest"}_id`]: selected.account.id, badge: "haunted" }, "Badge set.")}>Mark as haunted</Button>
           )}
           {selected && (
@@ -597,6 +606,32 @@ export function AdminPanel({ token, onLock }: { token: string; onLock: () => voi
                 <strong>{p.code}</strong> · {Number(p.tokens).toLocaleString()} tokens{p.lifetime ? " · lifetime pro" : p.grants_pro ? " · pro" : ""}
               </span>
               <Button size="sm" variant="ghost" onClick={() => void act("delete_promo", { code: p.code }, "Promo deleted.")}>Delete</Button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="glass-panel p-5">
+        <h2 className="text-lg font-semibold">Collaborations</h2>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <Input placeholder="Title (e.g. SSRA × SpaceX)" value={collabDraft.title} onChange={(e) => setCollabDraft({ ...collabDraft, title: e.target.value })} />
+          <Input placeholder="Category (e.g. Experimental)" value={collabDraft.eyebrow} onChange={(e) => setCollabDraft({ ...collabDraft, eyebrow: e.target.value })} />
+          <Input placeholder="https:// link" value={collabDraft.href} onChange={(e) => setCollabDraft({ ...collabDraft, href: e.target.value })} />
+          <Input placeholder="Button label" value={collabDraft.action_label} onChange={(e) => setCollabDraft({ ...collabDraft, action_label: e.target.value })} />
+          <Input placeholder="Dates (optional)" value={collabDraft.dates} onChange={(e) => setCollabDraft({ ...collabDraft, dates: e.target.value })} />
+          <select className="h-10 rounded-md border border-input bg-secondary/40 px-3 text-sm" value={collabDraft.status} onChange={(e) => setCollabDraft({ ...collabDraft, status: e.target.value })}>
+            <option value="active">Active</option>
+            <option value="beta">Beta</option>
+            <option value="closed">Closed (can't join)</option>
+          </select>
+        </div>
+        <Textarea className="mt-2" placeholder="Description" value={collabDraft.description} onChange={(e) => setCollabDraft({ ...collabDraft, description: e.target.value })} />
+        <Button size="sm" className="mt-3" onClick={() => void act("create_collab", collabDraft, "Collaboration added.").then(() => setCollabDraft(emptyCollab))}>Add collaboration</Button>
+        <div className="mt-4 max-h-56 space-y-2 overflow-y-auto text-sm">
+          {(collabRows.data?.collabs ?? []).map((c) => (
+            <div key={c.id} className="flex items-center justify-between gap-2 rounded-lg bg-secondary/40 p-2.5">
+              <span className="truncate">{c.title} <span className="text-xs text-muted-foreground">· {c.status}</span></span>
+              <Button size="sm" variant="ghost" onClick={() => { if (window.confirm(`Remove ${c.title}?`)) void act("delete_collab", { id: c.id }, "Collaboration removed."); }}>Delete</Button>
             </div>
           ))}
         </div>
