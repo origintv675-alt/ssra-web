@@ -11,6 +11,8 @@ const DESTINATIONS: { to: string; label: string; hint: string }[] = [
   { to: "/skymap", label: "Sky map", hint: "Live star chart" },
   { to: "/sky-events", label: "Sky events", hint: "What to watch tonight" },
   { to: "/seismic", label: "Seismic waves", hint: "Quakes near you" },
+  { to: "/iss", label: "Live ISS tracker", hint: "Station position now" },
+  { to: "/quiz", label: "Daily space quiz", hint: "Earn tokens" },
   { to: "/trackers", label: "Trackers", hint: "Satellites overhead" },
   { to: "/objects", label: "Object tracker", hint: "Near-Earth objects" },
   { to: "/solar-system", label: "Solar system", hint: "Planet explorer" },
