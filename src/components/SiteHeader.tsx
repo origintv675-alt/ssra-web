@@ -21,6 +21,8 @@ const links = [
   { to: "/sky-events", label: "Sky events" },
   { to: "/trackers", label: "Trackers" },
   { to: "/seismic", label: "Seismic waves" },
+  { to: "/iss", label: "Live ISS" },
+  { to: "/quiz", label: "Daily quiz" },
   { to: "/objects", label: "Object tracker" },
   { to: "/solar-system", label: "Solar system" },
   { to: "/views", label: "Planetary views" },
