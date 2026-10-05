@@ -3,6 +3,7 @@ import {
   BadgeCheck,
   Bot,
   Check,
+  Crown,
   Coins,
   Gamepad2,
   Gift,
@@ -18,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SUPPORT_EMAIL } from "@/lib/constants";
 import { dailyTasks, PRO_PRICE_USD, PRO_TOKEN_COST, useTaskProgress } from "@/lib/tokens";
+import { SUPER_PRO_COST, SUPER_PRO_DAILY, useSuperPro } from "@/lib/superPro";
 import { useWallet } from "@/lib/wallet";
 
 export const Route = createFileRoute("/pro")({
@@ -47,6 +49,86 @@ const perks = [
   { icon: Bot, title: "CODEX coding AI", body: "A dedicated AI that writes and explains code for your space projects.", to: "/codex" as const },
   { icon: ImageIcon, title: "Image studio", body: "Generate mission posters, nebula art and rover concepts from a prompt.", to: "/imagine" as const },
 ];
+
+const superPerks = [
+  `${SUPER_PRO_DAILY} free space tokens every day`,
+  "Super Pro badge on your profile",
+  "Everything in Pro, unlocked forever",
+  "First access to new games and experiments",
+];
+
+function SuperProSection({ balance, signedIn }: { balance: number; signedIn: boolean }) {
+  const { active, claimedToday, unlock, claimDaily } = useSuperPro();
+  return (
+    <Reveal className="mt-8" from="scale">
+      <div className="glass-panel relative overflow-hidden p-5 sm:p-7">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="inline-flex items-center gap-2 font-display text-[11px] uppercase tracking-[0.3em] text-accent">
+              <Crown className="h-4 w-4" /> Super Pro
+            </p>
+            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">
+              Go <span className="neon-text">Super Pro</span>
+            </h2>
+            <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+              Unlock once for {SUPER_PRO_COST.toLocaleString()} space tokens and collect{" "}
+              {SUPER_PRO_DAILY} tokens every day.
+            </p>
+          </div>
+          <span className="glass-soft px-3 py-1 text-xs font-semibold text-accent">
+            {active ? "Active" : `${SUPER_PRO_COST.toLocaleString()} tokens`}
+          </span>
+        </div>
+        <ul className="mt-5 grid gap-2 sm:grid-cols-2">
+          {superPerks.map((p) => (
+            <li key={p} className="flex items-center gap-2 text-sm">
+              <Check className="h-4 w-4 text-primary" /> {p}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-6 flex flex-wrap gap-3">
+          {active ? (
+            <Button
+              className="gradient-neon text-primary-foreground"
+              disabled={claimedToday || claimDaily.isPending}
+              onClick={async () => {
+                try {
+                  const bal = await claimDaily.mutateAsync();
+                  toast.success(`+${SUPER_PRO_DAILY} tokens — balance ${bal.toLocaleString()}.`);
+                } catch (e) {
+                  toast.error(e instanceof Error ? e.message : "Could not claim today's reward.");
+                }
+              }}
+            >
+              <Gift className="mr-1.5 h-4 w-4" />
+              {claimedToday ? "Claimed today — come back tomorrow" : `Claim ${SUPER_PRO_DAILY} tokens`}
+            </Button>
+          ) : (
+            <Button
+              className="gradient-neon text-primary-foreground"
+              disabled={!signedIn || balance < SUPER_PRO_COST || unlock.isPending}
+              onClick={async () => {
+                try {
+                  await unlock.mutateAsync();
+                  toast.success("Super Pro unlocked!");
+                } catch (e) {
+                  toast.error(e instanceof Error ? e.message : "Could not unlock Super Pro.");
+                }
+              }}
+            >
+              <Crown className="mr-1.5 h-4 w-4" />
+              {!signedIn
+                ? "Sign in or create a guest account"
+                : balance < SUPER_PRO_COST
+                  ? `Need ${(SUPER_PRO_COST - balance).toLocaleString()} more tokens`
+                  : `Unlock for ${SUPER_PRO_COST.toLocaleString()} tokens`}
+            </Button>
+          )}
+        </div>
+      </div>
+    </Reveal>
+  );
+}
 
 function ProPage() {
   const { identity, balance, isPro, badge, claimed, claim, redeem, unlockPro: unlock } = useWallet();
@@ -133,6 +215,9 @@ function ProPage() {
           </div>
         </div>
       </Reveal>
+
+      <SuperProSection balance={balance} signedIn={identity.kind !== "visitor"} />
+
 
       <Reveal className="mt-10">
         <h2 className="text-2xl font-bold sm:text-3xl">
