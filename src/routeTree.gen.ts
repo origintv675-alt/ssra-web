@@ -27,12 +27,14 @@ import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as GamesRouteImport } from './routes/games'
 import { Route as ImagineRouteImport } from './routes/imagine'
+import { Route as IssRouteImport } from './routes/iss'
 import { Route as LobbyRouteImport } from './routes/lobby'
 import { Route as ManageRouteImport } from './routes/manage'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as ObjectsRouteImport } from './routes/objects'
 import { Route as PetsRouteImport } from './routes/pets'
 import { Route as ProRouteImport } from './routes/pro'
+import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as SeismicRouteImport } from './routes/seismic'
@@ -143,6 +145,11 @@ const ImagineRoute = ImagineRouteImport.update({
   path: '/imagine',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IssRoute = IssRouteImport.update({
+  id: '/iss',
+  path: '/iss',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LobbyRoute = LobbyRouteImport.update({
   id: '/lobby',
   path: '/lobby',
@@ -171,6 +178,11 @@ const PetsRoute = PetsRouteImport.update({
 const ProRoute = ProRouteImport.update({
   id: '/pro',
   path: '/pro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizRoute = QuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -293,12 +305,14 @@ export interface FileRoutesByFullPath {
   '/gallery': typeof GalleryRoute
   '/games': typeof GamesRoute
   '/imagine': typeof ImagineRoute
+  '/iss': typeof IssRoute
   '/lobby': typeof LobbyRoute
   '/manage': typeof ManageRoute
   '/news': typeof NewsRoute
   '/objects': typeof ObjectsRoute
   '/pets': typeof PetsRoute
   '/pro': typeof ProRoute
+  '/quiz': typeof QuizRoute
   '/reset-password': typeof ResetPasswordRoute
   '/security': typeof SecurityRoute
   '/seismic': typeof SeismicRoute
@@ -338,12 +352,14 @@ export interface FileRoutesByTo {
   '/gallery': typeof GalleryRoute
   '/games': typeof GamesRoute
   '/imagine': typeof ImagineRoute
+  '/iss': typeof IssRoute
   '/lobby': typeof LobbyRoute
   '/manage': typeof ManageRoute
   '/news': typeof NewsRoute
   '/objects': typeof ObjectsRoute
   '/pets': typeof PetsRoute
   '/pro': typeof ProRoute
+  '/quiz': typeof QuizRoute
   '/reset-password': typeof ResetPasswordRoute
   '/security': typeof SecurityRoute
   '/seismic': typeof SeismicRoute
@@ -385,12 +401,14 @@ export interface FileRoutesById {
   '/gallery': typeof GalleryRoute
   '/games': typeof GamesRoute
   '/imagine': typeof ImagineRoute
+  '/iss': typeof IssRoute
   '/lobby': typeof LobbyRoute
   '/manage': typeof ManageRoute
   '/news': typeof NewsRoute
   '/objects': typeof ObjectsRoute
   '/pets': typeof PetsRoute
   '/pro': typeof ProRoute
+  '/quiz': typeof QuizRoute
   '/reset-password': typeof ResetPasswordRoute
   '/security': typeof SecurityRoute
   '/seismic': typeof SeismicRoute
@@ -432,12 +450,14 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/games'
     | '/imagine'
+    | '/iss'
     | '/lobby'
     | '/manage'
     | '/news'
     | '/objects'
     | '/pets'
     | '/pro'
+    | '/quiz'
     | '/reset-password'
     | '/security'
     | '/seismic'
@@ -477,12 +497,14 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/games'
     | '/imagine'
+    | '/iss'
     | '/lobby'
     | '/manage'
     | '/news'
     | '/objects'
     | '/pets'
     | '/pro'
+    | '/quiz'
     | '/reset-password'
     | '/security'
     | '/seismic'
@@ -523,12 +545,14 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/games'
     | '/imagine'
+    | '/iss'
     | '/lobby'
     | '/manage'
     | '/news'
     | '/objects'
     | '/pets'
     | '/pro'
+    | '/quiz'
     | '/reset-password'
     | '/security'
     | '/seismic'
@@ -570,12 +594,14 @@ export interface RootRouteChildren {
   GalleryRoute: typeof GalleryRoute
   GamesRoute: typeof GamesRoute
   ImagineRoute: typeof ImagineRoute
+  IssRoute: typeof IssRoute
   LobbyRoute: typeof LobbyRoute
   ManageRoute: typeof ManageRoute
   NewsRoute: typeof NewsRoute
   ObjectsRoute: typeof ObjectsRoute
   PetsRoute: typeof PetsRoute
   ProRoute: typeof ProRoute
+  QuizRoute: typeof QuizRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SecurityRoute: typeof SecurityRoute
   SeismicRoute: typeof SeismicRoute
@@ -723,6 +749,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ImagineRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/iss': {
+      id: '/iss'
+      path: '/iss'
+      fullPath: '/iss'
+      preLoaderRoute: typeof IssRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lobby': {
       id: '/lobby'
       path: '/lobby'
@@ -763,6 +796,13 @@ declare module '@tanstack/react-router' {
       path: '/pro'
       fullPath: '/pro'
       preLoaderRoute: typeof ProRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz': {
+      id: '/quiz'
+      path: '/quiz'
+      fullPath: '/quiz'
+      preLoaderRoute: typeof QuizRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -942,12 +982,14 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryRoute: GalleryRoute,
   GamesRoute: GamesRoute,
   ImagineRoute: ImagineRoute,
+  IssRoute: IssRoute,
   LobbyRoute: LobbyRoute,
   ManageRoute: ManageRoute,
   NewsRoute: NewsRoute,
   ObjectsRoute: ObjectsRoute,
   PetsRoute: PetsRoute,
   ProRoute: ProRoute,
+  QuizRoute: QuizRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SecurityRoute: SecurityRoute,
   SeismicRoute: SeismicRoute,
