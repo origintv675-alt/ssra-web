@@ -5,7 +5,8 @@ import { useState } from "react";
 
 import { Reveal } from "@/components/Reveal";
 import { Input } from "@/components/ui/input";
-import { fetchSatellitesAt } from "@/lib/space";
+import { propagateSatellites } from "@/lib/space";
+import { getTles } from "@/lib/space.functions";
 
 export const Route = createFileRoute("/objects")({
   head: () => ({
@@ -30,10 +31,12 @@ export const Route = createFileRoute("/objects")({
 
 function ObjectTracker() {
   const [query, setQuery] = useState("");
+  const tles = useQuery({ queryKey: ["tles"], queryFn: () => getTles(), staleTime: 3_600_000 });
   const sats = useQuery({
-    queryKey: ["object-tracker"],
-    queryFn: () => fetchSatellitesAt(0),
-    refetchInterval: 8000,
+    queryKey: ["object-tracker", tles.data?.length ?? 0],
+    queryFn: () => propagateSatellites(tles.data ?? [], 0),
+    enabled: Boolean(tles.data?.length),
+    refetchInterval: 3000,
   });
 
   const list = (sats.data ?? []).filter((s) => s.name.toLowerCase().includes(query.toLowerCase()));
