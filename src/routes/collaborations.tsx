@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Lock } from "lucide-react";
+import { useSuperPro } from "@/lib/superPro";
 import {
   CalendarRange,
   ExternalLink,
@@ -94,6 +96,7 @@ function SpacecraftReveal({ onDone }: { onDone: () => void }) {
 }
 
 function CollaborationsPage() {
+  const superPro = useSuperPro();
   const { data: collabs = [], isLoading } = useQuery({
     queryKey: ["collaborations"],
     queryFn: async (): Promise<Collab[]> => {
@@ -198,7 +201,14 @@ function CollaborationsPage() {
               )}
               {c.status !== "closed" && c.note && <p className="mt-4 text-xs text-muted-foreground">{c.note}</p>}
 
-              {c.href && (
+              {c.href && nasa && !superPro.active && (
+                <Button asChild className="mt-6 self-start" variant="secondary">
+                  <Link to="/pro" onClick={(e) => e.stopPropagation()}>
+                    <Lock className="mr-2 h-4 w-4" /> Super Pro only
+                  </Link>
+                </Button>
+              )}
+              {c.href && (!nasa || superPro.active) && (
                 <Button asChild className="mt-6 self-start" variant="secondary">
                   <a href={c.href} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
                     {c.href === WHATSAPP_GROUP_URL ? <MessageCircle className="mr-2 h-4 w-4" /> : <ExternalLink className="mr-2 h-4 w-4" />}
