@@ -5,8 +5,8 @@ import { useState } from "react";
 
 import { Reveal } from "@/components/Reveal";
 import { Slider } from "@/components/ui/slider";
-import { fetchSatellitesAt } from "@/lib/space";
-import { getCloseApproaches } from "@/lib/space.functions";
+import { propagateSatellites } from "@/lib/space";
+import { getCloseApproaches, getTles } from "@/lib/space.functions";
 
 export const Route = createFileRoute("/trackers")({
   head: () => ({
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/trackers")({
       {
         name: "description",
         content:
-          "Track the ISS, Hubble, Tiangong and NOAA-20 live, plus near-Earth object close approaches over the next 60 days.",
+          "Track the ISS, Hubble, Tiangong, Landsat, NOAA weather satellites and Starlink live, plus near-Earth object close approaches over the next 60 days.",
       },
       { property: "og:title", content: "Live Satellite & Space Object Trackers — SSRA" },
       {
@@ -33,10 +33,12 @@ export const Route = createFileRoute("/trackers")({
 
 function Trackers() {
   const [offset, setOffset] = useState(0);
+  const tles = useQuery({ queryKey: ["tles"], queryFn: () => getTles(), staleTime: 3_600_000 });
   const sats = useQuery({
-    queryKey: ["satellites", offset],
-    queryFn: () => fetchSatellitesAt(offset),
-    refetchInterval: offset === 0 ? 8000 : false,
+    queryKey: ["satellites", offset, tles.data?.length ?? 0],
+    queryFn: () => propagateSatellites(tles.data ?? [], offset),
+    enabled: Boolean(tles.data?.length),
+    refetchInterval: offset === 0 ? 3000 : false,
   });
   const neo = useQuery({ queryKey: ["neo"], queryFn: () => getCloseApproaches() });
   const when = new Date(Date.now() + offset * 60_000);
@@ -60,7 +62,7 @@ function Trackers() {
         <h2 className="font-display text-xl font-semibold">
           <Satellite className="mr-2 inline h-5 w-5 text-primary" /> Tracked spacecraft
         </h2>
-        {sats.isError && (
+        {(sats.isError || tles.isError) && (
           <p className="glass-soft mt-4 p-4 text-sm text-destructive-foreground">
             Telemetry link lost. We will retry automatically — try again in a moment.
           </p>
@@ -134,7 +136,7 @@ function Trackers() {
               </article>
             </Reveal>
           ))}
-          {sats.isLoading &&
+          {(sats.isLoading || tles.isLoading) &&
             Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="glass-soft h-40 animate-pulse-glow" />
             ))}

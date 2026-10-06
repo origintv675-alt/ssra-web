@@ -13,51 +13,51 @@ export const TRACKED_SATELLITES = [
   { id: 20580, name: "Hubble Space Telescope" },
   { id: 48274, name: "Tiangong Space Station" },
   { id: 43013, name: "NOAA-20 Weather Sat" },
+  { id: 33591, name: "NOAA-19 Weather Sat" },
+  { id: 25994, name: "Terra (Earth observation)" },
+  { id: 27424, name: "Aqua (Earth observation)" },
+  { id: 39084, name: "Landsat 8" },
+  { id: 49260, name: "Landsat 9" },
+  { id: 44713, name: "Starlink-1007" },
 ];
 
-/** Live positions for the tracked satellites (public wheretheiss.at API). */
-export async function fetchSatellites(): Promise<SatellitePosition[]> {
-  const ids = TRACKED_SATELLITES.map((s) => s.id).join(",");
-  const res = await fetch(`https://api.wheretheiss.at/v1/satellites/${ids}?units=kilometers`);
-  if (!res.ok) throw new Error("Satellite telemetry is unavailable right now.");
-  const raw = (await res.json()) as Array<Record<string, number | string>>;
-  const list = Array.isArray(raw) ? raw : [raw];
-  return list.map(toPosition);
-}
-
-function toPosition(item: Record<string, number | string>): SatellitePosition {
-  return {
-    id: Number(item["id"]),
-    name:
-      TRACKED_SATELLITES.find((s) => s.id === Number(item["id"]))?.name ??
-      String(item["name"] ?? "Unknown object"),
-    latitude: Number(item["latitude"]),
-    longitude: Number(item["longitude"]),
-    altitude: Number(item["altitude"]),
-    velocity: Number(item["velocity"]),
-    visibility: String(item["visibility"] ?? "unknown"),
-  };
-}
+export type Tle = { id: number; l1: string; l2: string };
 
 /**
- * Propagated positions for a moment in the past or future, so the tracker's
- * time slider can rewind or fast-forward each orbit.
+ * Positions for all tracked satellites at now + offsetMinutes, propagated
+ * client-side from CelesTrak orbital elements (SGP4).
  */
-export async function fetchSatellitesAt(offsetMinutes: number): Promise<SatellitePosition[]> {
-  if (offsetMinutes === 0) return fetchSatellites();
-  const stamp = Math.round(Date.now() / 1000 + offsetMinutes * 60);
-  const results = await Promise.all(
-    TRACKED_SATELLITES.map(async (sat) => {
-      const res = await fetch(
-        `https://api.wheretheiss.at/v1/satellites/${sat.id}/positions?timestamps=${stamp}&units=kilometers`,
-      );
-      if (!res.ok) return null;
-      const rows = (await res.json()) as Array<Record<string, number | string>>;
-      const row = Array.isArray(rows) ? rows[0] : rows;
-      return row ? toPosition({ ...row, id: sat.id }) : null;
-    }),
-  );
-  const list = results.filter((v): v is SatellitePosition => v !== null);
+export async function propagateSatellites(tles: Tle[], offsetMinutes: number): Promise<SatellitePosition[]> {
+  const sat = await import("satellite.js");
+  const when = new Date(Date.now() + offsetMinutes * 60_000);
+  const gmst = sat.gstime(when);
+  const list: SatellitePosition[] = [];
+  for (const t of tles) {
+    const rec = sat.twoline2satrec(t.l1, t.l2);
+    const pv = sat.propagate(rec, when);
+    if (!pv || typeof pv.position === "boolean" || !pv.position || typeof pv.velocity === "boolean" || !pv.velocity) continue;
+    const geo = sat.eciToGeodetic(pv.position, gmst);
+    const v = pv.velocity;
+    const speed = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z) * 3600;
+    // Rough sunlit check: subsolar point angular distance.
+    const lat = sat.degreesLat(geo.latitude);
+    const lon = sat.degreesLong(geo.longitude);
+    const dayOfYear = Math.floor((when.getTime() - Date.UTC(when.getUTCFullYear(), 0, 0)) / 86_400_000);
+    const decl = -23.44 * Math.cos(((2 * Math.PI) / 365) * (dayOfYear + 10));
+    const subLon = -15 * (when.getUTCHours() + when.getUTCMinutes() / 60 - 12);
+    const r = Math.PI / 180;
+    const cosAng = Math.sin(lat * r) * Math.sin(decl * r) + Math.cos(lat * r) * Math.cos(decl * r) * Math.cos((lon - subLon) * r);
+    const horizon = -Math.acos(6371 / (6371 + geo.height)) ;
+    list.push({
+      id: t.id,
+      name: TRACKED_SATELLITES.find((s) => s.id === t.id)?.name ?? `NORAD ${t.id}`,
+      latitude: lat,
+      longitude: lon,
+      altitude: geo.height,
+      velocity: speed,
+      visibility: Math.asin(Math.max(-1, Math.min(1, cosAng))) > horizon ? "daylight" : "eclipsed",
+    });
+  }
   if (list.length === 0) throw new Error("Satellite telemetry is unavailable right now.");
   return list;
 }

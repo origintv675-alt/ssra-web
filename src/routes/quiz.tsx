@@ -42,11 +42,41 @@ const POOL: Q[] = [
   { q: "The Great Red Spot is a storm on?", a: ["Mars", "Saturn", "Jupiter", "Neptune"], c: 2 },
   { q: "Which moon has thick orange haze and methane lakes?", a: ["Europa", "Titan", "Io", "Ganymede"], c: 1 },
   { q: "First crewed Moon landing year?", a: ["1961", "1965", "1969", "1972"], c: 2 },
+  { q: "Which planet is known as the Red Planet?", a: ["Venus", "Mars", "Mercury", "Jupiter"], c: 1 },
+  { q: "What is the closest star to the Sun?", a: ["Sirius", "Betelgeuse", "Proxima Centauri", "Vega"], c: 2 },
+  { q: "Which planet has the strongest winds?", a: ["Neptune", "Earth", "Mars", "Mercury"], c: 0 },
+  { q: "What was the first artificial satellite?", a: ["Explorer 1", "Sputnik 1", "Vanguard 1", "Telstar"], c: 1 },
+  { q: "Which dwarf planet was reclassified in 2006?", a: ["Ceres", "Eris", "Pluto", "Makemake"], c: 2 },
+  { q: "What lies between Mars and Jupiter?", a: ["Kuiper Belt", "Oort Cloud", "Asteroid Belt", "Van Allen Belt"], c: 2 },
+  { q: "Which moon of Jupiter has the most volcanoes?", a: ["Io", "Europa", "Callisto", "Ganymede"], c: 0 },
+  { q: "How old is the universe, roughly?", a: ["4.6 billion yrs", "13.8 billion yrs", "100 billion yrs", "1 million yrs"], c: 1 },
+  { q: "What is the largest moon in the solar system?", a: ["Titan", "The Moon", "Ganymede", "Triton"], c: 2 },
+  { q: "Which agency runs the Chandrayaan missions?", a: ["NASA", "ESA", "ISRO", "JAXA"], c: 2 },
+  { q: "What is the name of our galaxy?", a: ["Andromeda", "Milky Way", "Pinwheel", "Magellanic"], c: 1 },
+  { q: "Which planet has a day longer than its year?", a: ["Venus", "Mercury", "Mars", "Saturn"], c: 0 },
+  { q: "What force keeps planets in orbit?", a: ["Magnetism", "Friction", "Gravity", "Solar wind"], c: 2 },
+  { q: "Which rover landed on Mars in 2021?", a: ["Curiosity", "Spirit", "Perseverance", "Sojourner"], c: 2 },
+  { q: "What is a supernova?", a: ["A new planet", "An exploding star", "A comet tail", "A black hole merger"], c: 1 },
+  { q: "Which planet has the famous rings?", a: ["Saturn", "Mars", "Venus", "Mercury"], c: 0 },
+  { q: "What do we call a rock that lands on Earth from space?", a: ["Meteor", "Meteorite", "Comet", "Asteroid"], c: 1 },
+  { q: "Who first walked on the Moon?", a: ["Buzz Aldrin", "Neil Armstrong", "Michael Collins", "John Glenn"], c: 1 },
+  { q: "Which company launches Falcon 9 rockets?", a: ["Blue Origin", "SpaceX", "Rocket Lab", "Boeing"], c: 1 },
 ];
 
+/** Five questions picked by a day-seeded shuffle, so every day gets a new set. */
 function todaysQuestions(): Q[] {
-  const day = Math.floor(Date.now() / 86_400_000);
-  return Array.from({ length: 5 }, (_, i) => POOL[(day * 5 + i * 7) % POOL.length]!);
+  const now = new Date();
+  let seed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+  const rand = () => {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return seed / 4294967296;
+  };
+  const idx = POOL.map((_, i) => i);
+  for (let i = idx.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(rand() * (i + 1));
+    [idx[i], idx[j]] = [idx[j]!, idx[i]!];
+  }
+  return idx.slice(0, 5).map((i) => POOL[i]!);
 }
 
 function QuizPage() {
