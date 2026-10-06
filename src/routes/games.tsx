@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Gamepad2 } from "lucide-react";
+import { Crown, ExternalLink, Gamepad2, Lock } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 
 import { ProGate } from "@/components/ProGate";
 import { Reveal } from "@/components/Reveal";
 import { Button } from "@/components/ui/button";
+import { useSuperPro } from "@/lib/superPro";
 
 export const Route = createFileRoute("/games")({
   head: () => ({
@@ -36,6 +38,7 @@ function GamesPage() {
           <div className="space-y-6">
             <DebrisRun />
             <ConstellationMatch />
+            <SuperProGames />
           </div>
         </ProGate>
       </div>
@@ -221,4 +224,39 @@ function shuffle<T>(items: T[]): T[] {
     [copy[i], copy[j]] = [copy[j]!, copy[i]!];
   }
   return copy;
+}
+const SUPER_GAMES = [
+  { title: "DOOM", body: "The 1993 classic shareware episode, playable right in your browser.", href: "https://dos.zone/doom-dec-1993/" },
+  { title: "Minecraft Classic", body: "Mojang's free browser edition of Minecraft — build with friends.", href: "https://classic.minecraft.net/" },
+];
+
+/** Super Pro-only links to full classic games. */
+function SuperProGames() {
+  const { active } = useSuperPro();
+  return (
+    <section className="glass-panel p-5">
+      <h2 className="flex items-center gap-2 text-xl font-semibold">
+        <Crown className="h-5 w-5 text-accent" /> Super Pro games
+      </h2>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        {SUPER_GAMES.map((g) => (
+          <article key={g.title} className="glass-inset flex flex-col p-4">
+            <h3 className="text-lg font-semibold">{g.title}</h3>
+            <p className="mt-1 flex-1 text-sm text-muted-foreground">{g.body}</p>
+            {active ? (
+              <Button asChild className="mt-3 gradient-neon text-primary-foreground">
+                <a href={g.href} target="_blank" rel="noopener noreferrer">
+                  Play <ExternalLink className="ml-1.5 h-4 w-4" />
+                </a>
+              </Button>
+            ) : (
+              <Button asChild variant="secondary" className="mt-3">
+                <Link to="/pro"><Lock className="mr-1.5 h-4 w-4" /> Unlock with Super Pro</Link>
+              </Button>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+  );
 }
