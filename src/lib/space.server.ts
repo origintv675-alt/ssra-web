@@ -19,3 +19,22 @@ export async function loadCloseApproaches(): Promise<CloseApproach[]> {
       : "unknown",
   }));
 }
+
+/** Fetches current TLE orbital elements from CelesTrak for the given NORAD ids. */
+export async function loadTles(ids: number[]): Promise<Array<{ id: number; l1: string; l2: string }>> {
+  const out = await Promise.all(
+    ids.map(async (id) => {
+      try {
+        const res = await fetch(`https://celestrak.org/NORAD/elements/gp.php?CATNR=${id}&FORMAT=TLE`);
+        if (!res.ok) return null;
+        const lines = (await res.text()).trim().split(/\r?\n/).map((l) => l.trim());
+        const l1 = lines.find((l) => l.startsWith("1 "));
+        const l2 = lines.find((l) => l.startsWith("2 "));
+        return l1 && l2 ? { id, l1, l2 } : null;
+      } catch {
+        return null;
+      }
+    }),
+  );
+  return out.filter((v): v is { id: number; l1: string; l2: string } => v !== null);
+}

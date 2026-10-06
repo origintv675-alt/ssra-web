@@ -32,8 +32,17 @@ const TASK_POOL: DailyTask[] = [
 
 /** Deterministic rotation: the same four tasks all day, new ones tomorrow. */
 export function dailyTasks(now = new Date()): DailyTask[] {
-  const dayIndex = Math.floor(now.getTime() / 86_400_000);
-  return Array.from({ length: 4 }, (_, i) => TASK_POOL[(dayIndex * 4 + i * 3) % TASK_POOL.length]!);
+  let seed = Number(todayKey(now).replace(/-/g, ""));
+  const rand = () => {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return seed / 4294967296;
+  };
+  const idx = TASK_POOL.map((_, i) => i);
+  for (let i = idx.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(rand() * (i + 1));
+    [idx[i], idx[j]] = [idx[j]!, idx[i]!];
+  }
+  return idx.slice(0, 4).map((i) => TASK_POOL[i]!);
 }
 
 export function todayKey(now = new Date()): string {
